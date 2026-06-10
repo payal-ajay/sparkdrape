@@ -106,7 +106,15 @@ export const seedDemoData = createServerFn({ method: "POST" }).handler(async () 
     const chunk = customers.slice(i, i + 100);
     const { data, error } = await supabaseAdmin.from("customers").insert(chunk).select("id, persona, favorite_category");
     if (error) throw error;
-    if (data) inserted.push(...data);
+    if (data) {
+      for (const row of data) {
+        inserted.push({
+          id: row.id,
+          persona: row.persona ?? "New Shopper",
+          favorite_category: row.favorite_category ?? "western",
+        });
+      }
+    }
   }
 
   // Orders
@@ -115,10 +123,6 @@ export const seedDemoData = createServerFn({ method: "POST" }).handler(async () 
   for (let i = 0; i < allOrders.length; i += 500) {
     await supabaseAdmin.from("orders").insert(allOrders.slice(i, i + 500));
   }
-
-  // Aggregate stats per customer
-  const { data: aggRows } = await supabaseAdmin.rpc("noop_placeholder").catch(() => ({ data: null }));
-  void aggRows;
   for (const c of inserted) {
     const { data: orders } = await supabaseAdmin
       .from("orders")
