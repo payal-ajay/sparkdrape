@@ -204,14 +204,16 @@ function TypingDots() {
 }
 
 function AgentCard({ card, onLaunch }: { card: AgentCardSpec; onLaunch: (c: AgentCardSpec) => void }) {
-  const icon = {
+  const iconMap: Record<string, React.ReactNode> = {
     flash_drop: <Flame className="size-3.5" />,
     challenge: <Sparkles className="size-3.5" />,
     contest: <Trophy className="size-3.5" />,
     loyalty: <Crown className="size-3.5" />,
     occasion: <Calendar className="size-3.5" />,
     standard: <UsersIcon className="size-3.5" />,
-  }[card.campaign_type ?? "standard"] ?? <Sparkles className="size-3.5" />;
+    "re-engagement": <UsersIcon className="size-3.5" />,
+  };
+  const icon = iconMap[card.campaign_type ?? "standard"] ?? <Sparkles className="size-3.5" />;
 
   const accent = card.campaign_type === "flash_drop" ? "var(--rose)"
     : card.campaign_type === "contest" ? "var(--gold)"
