@@ -83,7 +83,7 @@ export function AgentChat() {
       // persist
       await supabase.from("agent_conversations").insert([
         { role: "user", content: text.trim() },
-        { role: "assistant", content: resp.message, metadata: (resp.card ?? null) as unknown as Record<string, unknown> },
+        { role: "assistant", content: resp.message, metadata: JSON.parse(JSON.stringify(resp.card ?? null)) },
       ]);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Something went wrong.";
