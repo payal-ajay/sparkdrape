@@ -243,7 +243,7 @@ function AgentCard({ card, onLaunch }: { card: AgentCardSpec; onLaunch: (c: Agen
         <div className="space-y-2">
           <div className="text-[10px] mono uppercase tracking-widest text-muted-foreground">Sample copy per persona</div>
           {card.sample_messages.slice(0, 3).map((s, i) => (
-            <div key={i} className="rounded-md bg-white/[0.02] border border-white/[0.04] p-3 space-y-1.5">
+            <div key={i} className="rounded-md bg-[color:var(--violet)]/5 border border-[color:var(--surface-2)] p-3 space-y-1.5">
               <div className="text-[10px] mono uppercase tracking-wider" style={{ color: accent }}>{s.persona}</div>
               <div className="text-sm leading-relaxed">{s.content}</div>
               <div className="text-[11px] text-muted-foreground italic">› {s.reasoning}</div>

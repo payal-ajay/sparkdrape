@@ -69,7 +69,7 @@ function LoyaltyPage() {
             <p className="text-sm text-muted-foreground">Push them over with a milestone campaign — ask SPARK in Agent.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
               {closeToIcon.slice(0, 6).map(c => (
-                <div key={c.id} className="flex items-center justify-between text-sm rounded-md bg-white/[0.02] p-2.5">
+                <div key={c.id} className="flex items-center justify-between text-sm rounded-md bg-[color:var(--violet)]/5 p-2.5">
                   <span>{c.name}</span>
                   <span className="mono text-[color:var(--gold)]">{c.loyalty_points} pts</span>
                 </div>
@@ -99,7 +99,7 @@ function LoyaltyPage() {
             <div className="p-8 text-center text-muted-foreground text-sm">No actions yet. Seed data first.</div>
           ) : (
             <table className="w-full text-sm">
-              <thead className="text-[10px] mono uppercase text-muted-foreground bg-white/[0.02]">
+              <thead className="text-[10px] mono uppercase text-muted-foreground bg-[color:var(--violet)]/5">
                 <tr><th className="text-left px-4 py-2.5">Customer</th><th className="text-left px-4 py-2.5">Event</th><th className="text-left px-4 py-2.5">Description</th><th className="text-right px-4 py-2.5">Points</th></tr>
               </thead>
               <tbody>

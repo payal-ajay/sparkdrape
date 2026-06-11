@@ -59,7 +59,7 @@ export function Sidebar() {
               className={`group flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-all relative ${
                 active
                   ? "text-foreground bg-[color:var(--violet)]/10"
-                  : "text-muted-foreground hover:text-foreground hover:bg-white/[0.02]"
+                  : "text-muted-foreground hover:text-foreground hover:bg-[color:var(--violet)]/5"
               }`}
             >
               {active && <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r bg-[color:var(--violet)] shadow-[0_0_10px_var(--violet)]" />}
@@ -71,11 +71,11 @@ export function Sidebar() {
       </nav>
 
       <div className="p-3 border-t border-[color:var(--surface-2)] space-y-2">
-        <div className="flex items-center justify-between px-3 py-2 rounded-md bg-white/[0.02] text-xs">
+        <div className="flex items-center justify-between px-3 py-2 rounded-md bg-[color:var(--violet)]/5 text-xs">
           <span className="text-muted-foreground">Shoppers</span>
           <span className="mono font-semibold">{customerCount.toLocaleString()}</span>
         </div>
-        <div className="flex items-center justify-between px-3 py-2 rounded-md bg-white/[0.02] text-xs">
+        <div className="flex items-center justify-between px-3 py-2 rounded-md bg-[color:var(--violet)]/5 text-xs">
           <span className="text-muted-foreground flex items-center gap-1.5">
             {liveCampaigns > 0 && <span className="relative size-1.5 rounded-full text-[color:var(--violet)] bg-current pulse-dot" />}
             Live campaigns
