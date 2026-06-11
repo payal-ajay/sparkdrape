@@ -120,40 +120,47 @@ export function AgentChat() {
   }
 
   return (
-    <div className="h-[calc(100vh-3.5rem)] flex">
+    <div className="h-[calc(100vh-4rem)] flex">
       <div className="flex-1 flex flex-col min-w-0">
-        <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 md:px-10 py-8 space-y-6">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto px-8 md:px-14 py-10 space-y-8">
           {messages.map((m, i) => (
             <MessageRow key={i} msg={m} onLaunch={handleLaunch} />
           ))}
           {busy && <TypingDots />}
           {messages.length === 1 && (
-            <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-2xl">
+            <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl">
               {STARTERS.map((s) => (
-                <button key={s} onClick={() => send(s)}
-                  className="text-left px-4 py-3 surface-hover text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  <span className="text-[color:var(--violet)] mr-2">›</span>{s}
+                <button
+                  key={s}
+                  onClick={() => send(s)}
+                  className="text-left px-4 py-3 rounded-xl bg-white border border-[color:var(--surface-2)] text-sm text-[color:var(--ink)] hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-12px_rgba(17,17,24,0.18)] transition-all"
+                >
+                  <span className="text-[color:var(--violet)] mr-2">›</span>
+                  {s}
                 </button>
               ))}
             </div>
           )}
         </div>
 
-        <div className="px-6 md:px-10 pb-6">
+        <div className="px-8 md:px-14 pb-8">
           <form
             onSubmit={(e) => { e.preventDefault(); send(input); }}
-            className="flex items-center gap-2 surface px-3 py-2 focus-within:border-[color:var(--violet)] focus-within:shadow-[0_0_30px_-10px_var(--violet)] transition-all"
+            className="flex items-center gap-2 bg-white border border-[color:var(--surface-2)] rounded-2xl px-3 py-2 shadow-[0_2px_8px_-4px_rgba(17,17,24,0.08)] focus-within:border-[color:var(--violet)]/40 focus-within:shadow-[0_8px_24px_-10px_rgba(124,58,237,0.25)] transition-all"
           >
             <Sparkles className="size-4 text-[color:var(--violet)] ml-1.5" />
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask SPARK — describe an audience, an occasion, or a campaign idea…"
-              className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground py-2"
+              className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground py-2 text-[color:var(--ink)]"
               disabled={busy}
             />
-            <button type="submit" disabled={busy || !input.trim()}
-              className="size-9 rounded-md bg-[color:var(--violet)] hover:bg-[color:var(--violet)]/90 disabled:opacity-30 grid place-items-center transition-all">
+            <button
+              type="submit"
+              disabled={busy || !input.trim()}
+              className="size-9 rounded-xl bg-[color:var(--ink)] hover:bg-[color:var(--ink)]/90 disabled:opacity-30 grid place-items-center transition-all"
+            >
               <Send className="size-4 text-white" />
             </button>
           </form>
@@ -167,18 +174,20 @@ function MessageRow({ msg, onLaunch }: { msg: UIMsg; onLaunch: (c: AgentCardSpec
   if (msg.role === "user") {
     return (
       <div className="flex justify-end">
-        <div className="max-w-[80%] surface px-4 py-2.5 text-sm">{msg.content}</div>
+        <div className="max-w-[80%] rounded-2xl rounded-tr-md px-4 py-2.5 text-sm bg-[color:var(--ink)] text-white">
+          {msg.content}
+        </div>
       </div>
     );
   }
   return (
     <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="flex gap-3 max-w-3xl">
-      <div className="shrink-0 size-7 rounded-md bg-gradient-to-br from-[color:var(--violet)] to-[color:var(--cyan)] grid place-items-center mt-0.5">
-        <Zap className="size-3.5 text-white" />
+      <div className="shrink-0 size-8 rounded-xl bg-[color:var(--ink)] grid place-items-center mt-0.5">
+        <Zap className="size-4 text-white" strokeWidth={2} />
       </div>
       <div className="flex-1 min-w-0 space-y-3">
-        <div className="text-[10px] mono uppercase tracking-widest text-[color:var(--violet)]">SPARK AI</div>
-        <div className="text-sm leading-relaxed text-foreground/90 border-l-2 border-[color:var(--violet)]/40 pl-3">{msg.content}</div>
+        <div className="text-[10px] mono uppercase tracking-widest text-muted-foreground">SPARK AI</div>
+        <div className="text-[15px] leading-relaxed text-[color:var(--ink)]">{msg.content}</div>
         {msg.card && msg.card.type !== "none" && <AgentCard card={msg.card} onLaunch={onLaunch} />}
       </div>
     </motion.div>
@@ -188,13 +197,13 @@ function MessageRow({ msg, onLaunch }: { msg: UIMsg; onLaunch: (c: AgentCardSpec
 function TypingDots() {
   return (
     <div className="flex gap-3">
-      <div className="shrink-0 size-7 rounded-md bg-gradient-to-br from-[color:var(--violet)] to-[color:var(--cyan)] grid place-items-center">
-        <Zap className="size-3.5 text-white" />
+      <div className="shrink-0 size-8 rounded-xl bg-[color:var(--ink)] grid place-items-center">
+        <Zap className="size-4 text-white" strokeWidth={2} />
       </div>
       <div className="flex items-center gap-1.5 px-3 py-3">
         {[0,1,2].map(i => (
           <motion.span key={i}
-            className="size-1.5 rounded-full bg-[color:var(--violet)]"
+            className="size-1.5 rounded-full bg-[color:var(--ink)]/60"
             animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.1, 0.8] }}
             transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.18 }} />
         ))}
@@ -202,6 +211,17 @@ function TypingDots() {
     </div>
   );
 }
+
+// Pastel campaign-type tint map
+const TYPE_THEME: Record<string, { tint: string; accent: string; label: string }> = {
+  flash_drop:      { tint: "var(--tint-rose)",     accent: "var(--rose)",    label: "Flash Drop" },
+  challenge:       { tint: "var(--tint-cyan)",     accent: "var(--cyan)",    label: "Style Challenge" },
+  contest:         { tint: "var(--tint-amber)",    accent: "var(--gold)",    label: "Contest" },
+  loyalty:         { tint: "var(--tint-emerald)",  accent: "var(--emerald)", label: "Loyalty" },
+  occasion:        { tint: "var(--tint-amber)",    accent: "var(--amber)",   label: "Occasion" },
+  standard:        { tint: "var(--tint-lavender)", accent: "var(--violet)",  label: "Standard" },
+  "re-engagement": { tint: "var(--tint-pink)",     accent: "var(--rose)",    label: "Re-engagement" },
+};
 
 function AgentCard({ card, onLaunch }: { card: AgentCardSpec; onLaunch: (c: AgentCardSpec) => void }) {
   const iconMap: Record<string, React.ReactNode> = {
@@ -213,39 +233,75 @@ function AgentCard({ card, onLaunch }: { card: AgentCardSpec; onLaunch: (c: Agen
     standard: <UsersIcon className="size-3.5" />,
     "re-engagement": <UsersIcon className="size-3.5" />,
   };
-  const icon = iconMap[card.campaign_type ?? "standard"] ?? <Sparkles className="size-3.5" />;
+  const ct = card.campaign_type ?? "standard";
+  const icon = iconMap[ct] ?? <Sparkles className="size-3.5" />;
+  const theme = TYPE_THEME[ct] ?? TYPE_THEME.standard;
 
-  const accent = card.campaign_type === "flash_drop" ? "var(--rose)"
-    : card.campaign_type === "contest" ? "var(--gold)"
-    : card.campaign_type === "loyalty" ? "var(--emerald)"
-    : card.campaign_type === "challenge" ? "var(--cyan)"
-    : "var(--violet)";
+  // Dark hero card for occasion alerts, viral suggestions, tier-ups
+  const isDarkHero = card.type === "occasion_alert" || card.type === "viral_campaign" || card.type === "loyalty_milestone";
 
+  if (isDarkHero) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+        className="dark-card p-6 space-y-4 relative overflow-hidden"
+      >
+        <div className="absolute -right-10 -top-10 size-40 rounded-full" style={{ background: `color-mix(in oklab, ${theme.accent} 40%, transparent)`, filter: "blur(40px)" }} />
+        <div className="relative flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] mono uppercase tracking-wider text-white" style={{ background: `color-mix(in oklab, ${theme.accent} 30%, transparent)` }}>
+            {icon}{theme.label}
+          </span>
+          {card.channel && <span className="text-[10px] mono uppercase text-white/50">{card.channel}</span>}
+        </div>
+        {card.title && <div className="relative text-2xl font-bold tracking-tight leading-tight">{card.title}</div>}
+        {card.description && <div className="relative text-sm text-white/70 max-w-md">{card.description}</div>}
+        {card.rationale && (
+          <div className="relative text-xs text-white/60 border-l-2 pl-3" style={{ borderColor: theme.accent }}>
+            <span className="mono uppercase text-[10px] tracking-wider mr-1.5" style={{ color: theme.accent }}>Why</span>
+            {card.rationale}
+          </div>
+        )}
+        <button onClick={() => onLaunch(card)} className="relative inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold bg-white text-[color:var(--ink)] hover:bg-white/90 transition-all">
+          {card.cta_label ?? "Launch Campaign"} <ArrowRight className="size-4" />
+        </button>
+      </motion.div>
+    );
+  }
+
+  // Pastel tinted card
   return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
-      className="surface p-5 space-y-4 relative overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `linear-gradient(90deg, ${accent}, transparent)` }} />
+    <motion.div
+      initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+      className="rounded-2xl p-5 space-y-4 relative overflow-hidden border"
+      style={{ background: theme.tint, borderColor: `color-mix(in oklab, ${theme.accent} 25%, transparent)` }}
+    >
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] mono uppercase tracking-wider border" style={{ color: accent, background: `color-mix(in oklab, ${accent} 10%, transparent)`, borderColor: `color-mix(in oklab, ${accent} 30%, transparent)` }}>
-            {icon}
-            {(card.campaign_type ?? card.type).replace(/_/g, " ")}
+          <span
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] mono uppercase tracking-wider"
+            style={{ color: theme.accent, background: `color-mix(in oklab, ${theme.accent} 18%, white)` }}
+          >
+            {icon}{theme.label}
           </span>
-          {card.segment_name && <span className="text-xs text-muted-foreground">{card.segment_name}</span>}
+          {card.segment_name && <span className="text-xs text-[color:var(--ink)]/60">{card.segment_name}</span>}
         </div>
-        {card.channel && <span className="text-[10px] mono uppercase text-muted-foreground">{card.channel}</span>}
+        {card.channel && (
+          <span className="text-[10px] mono uppercase px-2 py-1 rounded-full bg-white/70 text-[color:var(--ink)]/70">
+            {card.channel}
+          </span>
+        )}
       </div>
 
-      {card.title && <div className="text-base font-semibold tracking-tight">{card.title}</div>}
-      {card.description && <div className="text-sm text-muted-foreground">{card.description}</div>}
+      {card.title && <div className="text-lg font-semibold tracking-tight text-[color:var(--ink)]">{card.title}</div>}
+      {card.description && <div className="text-sm text-[color:var(--ink)]/70">{card.description}</div>}
 
       {card.sample_messages && card.sample_messages.length > 0 && (
         <div className="space-y-2">
-          <div className="text-[10px] mono uppercase tracking-widest text-muted-foreground">Sample copy per persona</div>
+          <div className="text-[10px] mono uppercase tracking-widest text-[color:var(--ink)]/50">Sample copy per persona</div>
           {card.sample_messages.slice(0, 3).map((s, i) => (
-            <div key={i} className="rounded-md bg-[color:var(--violet)]/5 border border-[color:var(--surface-2)] p-3 space-y-1.5">
-              <div className="text-[10px] mono uppercase tracking-wider" style={{ color: accent }}>{s.persona}</div>
-              <div className="text-sm leading-relaxed">{s.content}</div>
+            <div key={i} className="rounded-xl bg-white border border-black/5 p-3 space-y-1.5">
+              <div className="text-[10px] mono uppercase tracking-wider" style={{ color: theme.accent }}>{s.persona}</div>
+              <div className="text-sm leading-relaxed text-[color:var(--ink)]">{s.content}</div>
               <div className="text-[11px] text-muted-foreground italic">› {s.reasoning}</div>
             </div>
           ))}
@@ -253,19 +309,23 @@ function AgentCard({ card, onLaunch }: { card: AgentCardSpec; onLaunch: (c: Agen
       )}
 
       {card.rationale && (
-        <div className="text-xs text-muted-foreground border-l-2 pl-3" style={{ borderColor: accent }}>
-          <span className="mono uppercase text-[10px] tracking-wider mr-1.5" style={{ color: accent }}>Why</span>
+        <div className="text-xs text-[color:var(--ink)]/65 border-l-2 pl-3" style={{ borderColor: theme.accent }}>
+          <span className="mono uppercase text-[10px] tracking-wider mr-1.5" style={{ color: theme.accent }}>Why</span>
           {card.rationale}
         </div>
       )}
 
-      {card.type === "campaign_ready" || card.type === "viral_campaign" || card.type === "occasion_alert" || card.type === "loyalty_milestone" ? (
-        <button onClick={() => onLaunch(card)} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium text-white transition-all" style={{ background: `linear-gradient(135deg, ${accent}, color-mix(in oklab, ${accent} 60%, var(--violet)))` }}>
-          {card.cta_label ?? "🚀 Launch Campaign"} <ArrowRight className="size-4" />
+      {card.type === "campaign_ready" && (
+        <button
+          onClick={() => onLaunch(card)}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold bg-[color:var(--ink)] text-white hover:bg-[color:var(--ink)]/90 transition-all"
+        >
+          {card.cta_label ?? "Launch Campaign"} <ArrowRight className="size-4" />
         </button>
-      ) : null}
+      )}
     </motion.div>
   );
 }
 
 export { AnimatePresence };
+
