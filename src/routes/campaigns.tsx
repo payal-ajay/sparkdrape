@@ -107,7 +107,7 @@ function CampaignCard({ c, onClick }: { c: Campaign; onClick: () => void }) {
 
 function FunnelBar({ total, sent, delivered, opened, clicked }: { total: number; sent: number; delivered: number; opened: number; clicked: number }) {
   return (
-    <div className="h-1.5 rounded-full bg-white/5 overflow-hidden flex">
+    <div className="h-1.5 rounded-full bg-[color:var(--violet)]/10 overflow-hidden flex">
       <div className="h-full transition-all duration-700" style={{ width: `${(sent/total)*100}%`, background: "var(--violet)" }} />
       <div className="h-full transition-all duration-700 -ml-px" style={{ width: `${(delivered/total)*100 - (sent/total)*100}%`, background: "var(--cyan)" }} />
       <div className="h-full transition-all duration-700" style={{ width: `${((opened - clicked)/total)*100}%`, background: "var(--amber)" }} />
@@ -169,7 +169,7 @@ function CampaignSlideOver({ campaign, onClose }: { campaign: Campaign; onClose:
               <div className="text-[10px] mono uppercase tracking-widest text-muted-foreground">{campaign.campaign_type ?? "campaign"}</div>
               <h2 className="text-lg font-semibold tracking-tight mt-1">{campaign.name}</h2>
             </div>
-            <button onClick={onClose} className="size-8 rounded-md hover:bg-white/5 grid place-items-center"><X className="size-4" /></button>
+            <button onClick={onClose} className="size-8 rounded-md hover:bg-[color:var(--violet)]/10 grid place-items-center"><X className="size-4" /></button>
           </div>
 
           <div className="grid grid-cols-5 gap-2 text-center">
@@ -200,7 +200,7 @@ function CampaignSlideOver({ campaign, onClose }: { campaign: Campaign; onClose:
                   const isOpen = expanded === m.id;
                   return (
                     <motion.div key={m.id} layout initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
-                      className="rounded-md bg-white/[0.02] border border-white/[0.04] p-3 space-y-1.5">
+                      className="rounded-md bg-[color:var(--violet)]/5 border border-[color:var(--surface-2)] p-3 space-y-1.5">
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2 min-w-0">
                           <span className="text-xs font-medium truncate">{c?.name ?? "—"}</span>

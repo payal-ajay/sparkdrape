@@ -10,7 +10,7 @@ export function PersonaBadge({ persona, className = "" }: { persona: string | nu
     "Lapsed High-Value": "text-[color:var(--rose)] bg-[color:var(--rose)]/10 border-[color:var(--rose)]/30",
     "New Shopper": "text-[color:var(--violet)] bg-[color:var(--violet)]/10 border-[color:var(--violet)]/30",
   };
-  const cls = map[persona ?? ""] ?? "text-muted-foreground bg-white/5 border-white/10";
+  const cls = map[persona ?? ""] ?? "text-muted-foreground bg-[color:var(--violet)]/10 border-[color:var(--surface-2)]";
   return <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] mono uppercase tracking-wider border ${cls} ${className}`}>{persona ?? "—"}</span>;
 }
 

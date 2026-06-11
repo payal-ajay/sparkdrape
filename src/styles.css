@@ -41,42 +41,43 @@
 }
 
 :root {
-  --radius: 0.75rem;
-  /* Dark editorial, fashion war-room palette */
-  --background: oklch(0.13 0.02 280);     /* #0A0A0F */
-  --foreground: oklch(0.97 0.005 250);    /* #F8FAFC */
-  --surface: oklch(0.17 0.025 280);       /* #111118 */
-  --surface-2: oklch(0.22 0.03 280);      /* #1A1A2E */
-  --card: oklch(0.17 0.025 280);
-  --card-foreground: oklch(0.97 0.005 250);
-  --popover: oklch(0.15 0.025 280);
-  --popover-foreground: oklch(0.97 0.005 250);
-  --primary: oklch(0.58 0.24 295);        /* electric violet #7C3AED */
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.22 0.03 280);
-  --secondary-foreground: oklch(0.97 0.005 250);
-  --muted: oklch(0.22 0.03 280);
-  --muted-foreground: oklch(0.55 0.03 250); /* #64748B */
-  --accent: oklch(0.22 0.03 280);
-  --accent-foreground: oklch(0.97 0.005 250);
-  --destructive: oklch(0.6 0.22 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.25 0.03 280);
-  --input: oklch(0.22 0.03 280);
-  --ring: oklch(0.58 0.24 295);
+  --radius: 1rem;
+  /* Soft pastel, glassmorphic war-room palette */
+  --background: oklch(0.97 0.02 300);     /* soft lavender mist */
+  --foreground: oklch(0.28 0.04 280);     /* deep ink, not pure black */
+  --surface: oklch(0.99 0.01 300);        /* near-white card */
+  --surface-2: oklch(0.92 0.03 295);      /* subtle pastel border */
+  --card: oklch(0.99 0.01 300);
+  --card-foreground: oklch(0.28 0.04 280);
+  --popover: oklch(0.99 0.01 300);
+  --popover-foreground: oklch(0.28 0.04 280);
+  --primary: oklch(0.78 0.12 300);        /* pastel violet */
+  --primary-foreground: oklch(0.25 0.05 280);
+  --secondary: oklch(0.94 0.03 295);
+  --secondary-foreground: oklch(0.3 0.04 280);
+  --muted: oklch(0.94 0.025 295);
+  --muted-foreground: oklch(0.5 0.04 280);
+  --accent: oklch(0.92 0.05 200);
+  --accent-foreground: oklch(0.3 0.04 280);
+  --destructive: oklch(0.78 0.12 20);
+  --destructive-foreground: oklch(0.25 0.05 20);
+  --border: oklch(0.9 0.03 295);
+  --input: oklch(0.94 0.025 295);
+  --ring: oklch(0.78 0.12 300);
 
-  --violet: oklch(0.58 0.24 295);   /* #7C3AED */
-  --cyan: oklch(0.72 0.16 215);     /* #06B6D4 */
-  --emerald: oklch(0.7 0.17 160);   /* #10B981 */
-  --amber: oklch(0.78 0.16 75);     /* #F59E0B */
-  --rose: oklch(0.65 0.23 15);      /* #F43F5E */
-  --gold: oklch(0.78 0.16 75);
+  --violet: oklch(0.78 0.13 300);   /* pastel lilac */
+  --cyan: oklch(0.85 0.09 215);     /* pastel sky */
+  --emerald: oklch(0.85 0.1 160);   /* pastel mint */
+  --amber: oklch(0.9 0.09 80);      /* pastel butter */
+  --rose: oklch(0.85 0.09 15);      /* pastel blush */
+  --gold: oklch(0.88 0.1 75);       /* pastel peach */
 }
 
-.dark { color-scheme: dark; }
+.dark { color-scheme: light; }
+
 
 @layer base {
-  html { color-scheme: dark; }
+  html { color-scheme: light; }
   * { border-color: var(--color-border); }
   body {
     background-color: var(--color-background);
@@ -89,8 +90,10 @@
     content: "";
     position: fixed; inset: 0;
     background:
-      radial-gradient(ellipse at top left, color-mix(in oklab, var(--violet) 8%, transparent), transparent 60%),
-      radial-gradient(ellipse at bottom right, color-mix(in oklab, var(--cyan) 6%, transparent), transparent 55%);
+      radial-gradient(ellipse at top left, color-mix(in oklab, var(--violet) 35%, transparent), transparent 55%),
+      radial-gradient(ellipse at top right, color-mix(in oklab, var(--cyan) 30%, transparent), transparent 55%),
+      radial-gradient(ellipse at bottom left, color-mix(in oklab, var(--emerald) 25%, transparent), transparent 55%),
+      radial-gradient(ellipse at bottom right, color-mix(in oklab, var(--rose) 28%, transparent), transparent 55%);
     pointer-events: none; z-index: 0;
   }
   #app, main, [data-app] { position: relative; z-index: 1; }
@@ -99,60 +102,54 @@
 @utility mono { font-family: var(--font-mono); font-feature-settings: "ss01"; }
 
 @utility glass {
-  background: color-mix(in oklab, black 40%, transparent);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid color-mix(in oklab, white 6%, transparent);
+  background: color-mix(in oklab, white 60%, transparent);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid color-mix(in oklab, white 70%, transparent);
 }
 
 @utility surface {
-  background: var(--surface);
-  border: 1px solid var(--surface-2);
+  background: color-mix(in oklab, white 75%, transparent);
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  border: 1px solid color-mix(in oklab, white 65%, transparent);
   border-radius: var(--radius);
+  box-shadow: 0 4px 24px -8px color-mix(in oklab, var(--violet) 18%, transparent);
 }
+
 
 @utility surface-hover {
   position: relative;
-  background: var(--surface);
-  border: 1px solid var(--surface-2);
+  background: color-mix(in oklab, white 75%, transparent);
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  border: 1px solid color-mix(in oklab, white 65%, transparent);
   border-radius: var(--radius);
+  box-shadow: 0 4px 24px -8px color-mix(in oklab, var(--violet) 18%, transparent);
   transition: border-color .25s ease, transform .25s ease, box-shadow .25s ease;
   &:hover {
-    border-color: transparent;
-    box-shadow:
-      0 0 0 1px transparent,
-      0 10px 40px -20px color-mix(in oklab, var(--violet) 50%, transparent);
-  }
-  &:hover::before {
-    content: "";
-    position: absolute; inset: -1px;
-    padding: 1px;
-    border-radius: inherit;
-    background: linear-gradient(135deg, var(--violet), var(--cyan));
-    -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-            mask-composite: exclude;
-    pointer-events: none;
+    transform: translateY(-1px);
+    box-shadow: 0 12px 40px -12px color-mix(in oklab, var(--violet) 35%, transparent);
+    border-color: color-mix(in oklab, var(--violet) 35%, white);
   }
 }
 
 @utility shimmer {
   position: relative;
   overflow: hidden;
-  background: var(--surface);
+  background: color-mix(in oklab, var(--violet) 8%, white);
   &::after {
     content: "";
     position: absolute; inset: 0;
     background: linear-gradient(90deg,
       transparent,
-      color-mix(in oklab, white 4%, transparent),
+      color-mix(in oklab, white 80%, transparent),
       transparent);
     transform: translateX(-100%);
     animation: shimmer 1.6s infinite;
   }
 }
+
 
 @utility pulse-dot {
   position: relative;

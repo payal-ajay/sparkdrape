@@ -63,7 +63,7 @@ function SettingsPage() {
                 <Tile label="Campaigns" value={counts.campaigns} />
               </div>
               {seeding && (
-                <div className="mt-4 h-1 rounded-full bg-white/5 overflow-hidden">
+                <div className="mt-4 h-1 rounded-full bg-[color:var(--violet)]/10 overflow-hidden">
                   <motion.div className="h-full bg-gradient-to-r from-[color:var(--violet)] to-[color:var(--cyan)]"
                     initial={{ width: 0 }} animate={{ width: `${progress}%` }} />
                 </div>
@@ -88,7 +88,7 @@ function SettingsPage() {
 
 function Tile({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-md bg-white/[0.02] border border-white/[0.04] px-3 py-2.5">
+    <div className="rounded-md bg-[color:var(--violet)]/5 border border-[color:var(--surface-2)] px-3 py-2.5">
       <div className="text-[10px] mono uppercase tracking-widest text-muted-foreground">{label}</div>
       <div className="text-lg font-bold mono mt-0.5">{value.toLocaleString()}</div>
     </div>
