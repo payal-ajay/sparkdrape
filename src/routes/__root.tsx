@@ -34,7 +34,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head><HeadContent /></head>
       <body><div id="app">{children}</div><Scripts /></body>
     </html>
@@ -46,10 +46,11 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
-      <Toaster theme="dark" position="bottom-right" toastOptions={{ style: { background: "rgba(17,17,24,0.85)", backdropFilter: "blur(12px)", border: "1px solid rgba(124,58,237,0.3)", color: "#F8FAFC" } }} />
+      <Toaster theme="light" position="bottom-right" toastOptions={{ style: { background: "#FFFFFF", border: "1px solid #ECECE8", color: "#111118", boxShadow: "0 10px 30px -10px rgba(17,17,24,0.15)" } }} />
     </QueryClientProvider>
   );
 }
+
 
 function NotFound() {
   return (
