@@ -77,7 +77,7 @@
 
 
 @layer base {
-  html { color-scheme: dark; }
+  html { color-scheme: light; }
   * { border-color: var(--color-border); }
   body {
     background-color: var(--color-background);
@@ -90,8 +90,10 @@
     content: "";
     position: fixed; inset: 0;
     background:
-      radial-gradient(ellipse at top left, color-mix(in oklab, var(--violet) 8%, transparent), transparent 60%),
-      radial-gradient(ellipse at bottom right, color-mix(in oklab, var(--cyan) 6%, transparent), transparent 55%);
+      radial-gradient(ellipse at top left, color-mix(in oklab, var(--violet) 35%, transparent), transparent 55%),
+      radial-gradient(ellipse at top right, color-mix(in oklab, var(--cyan) 30%, transparent), transparent 55%),
+      radial-gradient(ellipse at bottom left, color-mix(in oklab, var(--emerald) 25%, transparent), transparent 55%),
+      radial-gradient(ellipse at bottom right, color-mix(in oklab, var(--rose) 28%, transparent), transparent 55%);
     pointer-events: none; z-index: 0;
   }
   #app, main, [data-app] { position: relative; z-index: 1; }
@@ -100,17 +102,21 @@
 @utility mono { font-family: var(--font-mono); font-feature-settings: "ss01"; }
 
 @utility glass {
-  background: color-mix(in oklab, black 40%, transparent);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid color-mix(in oklab, white 6%, transparent);
+  background: color-mix(in oklab, white 60%, transparent);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid color-mix(in oklab, white 70%, transparent);
 }
 
 @utility surface {
-  background: var(--surface);
-  border: 1px solid var(--surface-2);
+  background: color-mix(in oklab, white 75%, transparent);
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  border: 1px solid color-mix(in oklab, white 65%, transparent);
   border-radius: var(--radius);
+  box-shadow: 0 4px 24px -8px color-mix(in oklab, var(--violet) 18%, transparent);
 }
+
 
 @utility surface-hover {
   position: relative;
