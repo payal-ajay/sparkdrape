@@ -41,39 +41,40 @@
 }
 
 :root {
-  --radius: 0.75rem;
-  /* Dark editorial, fashion war-room palette */
-  --background: oklch(0.13 0.02 280);     /* #0A0A0F */
-  --foreground: oklch(0.97 0.005 250);    /* #F8FAFC */
-  --surface: oklch(0.17 0.025 280);       /* #111118 */
-  --surface-2: oklch(0.22 0.03 280);      /* #1A1A2E */
-  --card: oklch(0.17 0.025 280);
-  --card-foreground: oklch(0.97 0.005 250);
-  --popover: oklch(0.15 0.025 280);
-  --popover-foreground: oklch(0.97 0.005 250);
-  --primary: oklch(0.58 0.24 295);        /* electric violet #7C3AED */
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.22 0.03 280);
-  --secondary-foreground: oklch(0.97 0.005 250);
-  --muted: oklch(0.22 0.03 280);
-  --muted-foreground: oklch(0.55 0.03 250); /* #64748B */
-  --accent: oklch(0.22 0.03 280);
-  --accent-foreground: oklch(0.97 0.005 250);
-  --destructive: oklch(0.6 0.22 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.25 0.03 280);
-  --input: oklch(0.22 0.03 280);
-  --ring: oklch(0.58 0.24 295);
+  --radius: 1rem;
+  /* Soft pastel, glassmorphic war-room palette */
+  --background: oklch(0.97 0.02 300);     /* soft lavender mist */
+  --foreground: oklch(0.28 0.04 280);     /* deep ink, not pure black */
+  --surface: oklch(0.99 0.01 300);        /* near-white card */
+  --surface-2: oklch(0.92 0.03 295);      /* subtle pastel border */
+  --card: oklch(0.99 0.01 300);
+  --card-foreground: oklch(0.28 0.04 280);
+  --popover: oklch(0.99 0.01 300);
+  --popover-foreground: oklch(0.28 0.04 280);
+  --primary: oklch(0.78 0.12 300);        /* pastel violet */
+  --primary-foreground: oklch(0.25 0.05 280);
+  --secondary: oklch(0.94 0.03 295);
+  --secondary-foreground: oklch(0.3 0.04 280);
+  --muted: oklch(0.94 0.025 295);
+  --muted-foreground: oklch(0.5 0.04 280);
+  --accent: oklch(0.92 0.05 200);
+  --accent-foreground: oklch(0.3 0.04 280);
+  --destructive: oklch(0.78 0.12 20);
+  --destructive-foreground: oklch(0.25 0.05 20);
+  --border: oklch(0.9 0.03 295);
+  --input: oklch(0.94 0.025 295);
+  --ring: oklch(0.78 0.12 300);
 
-  --violet: oklch(0.58 0.24 295);   /* #7C3AED */
-  --cyan: oklch(0.72 0.16 215);     /* #06B6D4 */
-  --emerald: oklch(0.7 0.17 160);   /* #10B981 */
-  --amber: oklch(0.78 0.16 75);     /* #F59E0B */
-  --rose: oklch(0.65 0.23 15);      /* #F43F5E */
-  --gold: oklch(0.78 0.16 75);
+  --violet: oklch(0.78 0.13 300);   /* pastel lilac */
+  --cyan: oklch(0.85 0.09 215);     /* pastel sky */
+  --emerald: oklch(0.85 0.1 160);   /* pastel mint */
+  --amber: oklch(0.9 0.09 80);      /* pastel butter */
+  --rose: oklch(0.85 0.09 15);      /* pastel blush */
+  --gold: oklch(0.88 0.1 75);       /* pastel peach */
 }
 
-.dark { color-scheme: dark; }
+.dark { color-scheme: light; }
+
 
 @layer base {
   html { color-scheme: dark; }
