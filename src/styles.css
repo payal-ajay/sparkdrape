@@ -36,45 +36,67 @@
   --color-amber: var(--amber);
   --color-rose: var(--rose);
   --color-gold: var(--gold);
+  --color-ink: var(--ink);
+  --color-sidebar: var(--sidebar);
+  --color-tint-lavender: var(--tint-lavender);
+  --color-tint-rose: var(--tint-rose);
+  --color-tint-amber: var(--tint-amber);
+  --color-tint-emerald: var(--tint-emerald);
+  --color-tint-cyan: var(--tint-cyan);
+  --color-tint-pink: var(--tint-pink);
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --font-sans: "Inter", ui-sans-serif, system-ui;
 }
 
 :root {
-  --radius: 1rem;
-  /* Soft pastel, glassmorphic war-room palette */
-  --background: oklch(0.97 0.02 300);     /* soft lavender mist */
-  --foreground: oklch(0.28 0.04 280);     /* deep ink, not pure black */
-  --surface: oklch(0.99 0.01 300);        /* near-white card */
-  --surface-2: oklch(0.92 0.03 295);      /* subtle pastel border */
-  --card: oklch(0.99 0.01 300);
-  --card-foreground: oklch(0.28 0.04 280);
-  --popover: oklch(0.99 0.01 300);
-  --popover-foreground: oklch(0.28 0.04 280);
-  --primary: oklch(0.78 0.12 300);        /* pastel violet */
-  --primary-foreground: oklch(0.25 0.05 280);
-  --secondary: oklch(0.94 0.03 295);
-  --secondary-foreground: oklch(0.3 0.04 280);
-  --muted: oklch(0.94 0.025 295);
-  --muted-foreground: oklch(0.5 0.04 280);
-  --accent: oklch(0.92 0.05 200);
-  --accent-foreground: oklch(0.3 0.04 280);
-  --destructive: oklch(0.78 0.12 20);
-  --destructive-foreground: oklch(0.25 0.05 20);
-  --border: oklch(0.9 0.03 295);
-  --input: oklch(0.94 0.025 295);
-  --ring: oklch(0.78 0.12 300);
+  --radius: 0.875rem;
 
-  --violet: oklch(0.78 0.13 300);   /* pastel lilac */
-  --cyan: oklch(0.85 0.09 215);     /* pastel sky */
-  --emerald: oklch(0.85 0.1 160);   /* pastel mint */
-  --amber: oklch(0.9 0.09 80);      /* pastel butter */
-  --rose: oklch(0.85 0.09 15);      /* pastel blush */
-  --gold: oklch(0.88 0.1 75);       /* pastel peach */
+  /* Warm light editorial palette */
+  --background: #FAFAF8;         /* warm off-white canvas */
+  --foreground: #111118;          /* deep ink */
+  --ink: #111118;
+  --sidebar: #111118;
+
+  --surface: #FFFFFF;             /* card white */
+  --surface-2: #ECECE8;           /* warm hairline border */
+
+  --card: #FFFFFF;
+  --card-foreground: #111118;
+  --popover: #FFFFFF;
+  --popover-foreground: #111118;
+
+  --primary: #7C3AED;             /* violet accent (used sparingly) */
+  --primary-foreground: #FFFFFF;
+  --secondary: #F3F2EE;
+  --secondary-foreground: #111118;
+  --muted: #F3F2EE;
+  --muted-foreground: #64748B;
+  --accent: #EDE9FE;
+  --accent-foreground: #111118;
+  --destructive: #F43F5E;
+  --destructive-foreground: #FFFFFF;
+  --border: #ECECE8;
+  --input: #F3F2EE;
+  --ring: #7C3AED;
+
+  /* Accent saturated (badges, dots, sparklines) */
+  --violet: #7C3AED;
+  --cyan: #06B6D4;
+  --emerald: #10B981;
+  --amber: #F59E0B;
+  --rose: #F43F5E;
+  --gold: #B7791F;
+
+  /* Pastel campaign-type tints (card backgrounds) */
+  --tint-lavender: #EDE9FE;       /* Standard */
+  --tint-rose:     #FEE2E2;       /* Flash Drop */
+  --tint-amber:    #FEF3C7;       /* Occasion */
+  --tint-emerald:  #D1FAE5;       /* Loyalty */
+  --tint-cyan:     #CFFAFE;       /* Style Challenge */
+  --tint-pink:     #FCE7F3;       /* Re-engagement */
 }
 
 .dark { color-scheme: light; }
-
 
 @layer base {
   html { color-scheme: light; }
@@ -86,70 +108,59 @@
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     -webkit-font-smoothing: antialiased;
   }
-  body::before {
-    content: "";
-    position: fixed; inset: 0;
-    background:
-      radial-gradient(ellipse at top left, color-mix(in oklab, var(--violet) 35%, transparent), transparent 55%),
-      radial-gradient(ellipse at top right, color-mix(in oklab, var(--cyan) 30%, transparent), transparent 55%),
-      radial-gradient(ellipse at bottom left, color-mix(in oklab, var(--emerald) 25%, transparent), transparent 55%),
-      radial-gradient(ellipse at bottom right, color-mix(in oklab, var(--rose) 28%, transparent), transparent 55%);
-    pointer-events: none; z-index: 0;
-  }
   #app, main, [data-app] { position: relative; z-index: 1; }
 }
 
 @utility mono { font-family: var(--font-mono); font-feature-settings: "ss01"; }
 
-@utility glass {
-  background: color-mix(in oklab, white 60%, transparent);
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
-  border: 1px solid color-mix(in oklab, white 70%, transparent);
-}
-
+/* Light card surface — warm white with a hair-thin border + soft shadow */
 @utility surface {
-  background: color-mix(in oklab, white 75%, transparent);
-  backdrop-filter: blur(14px) saturate(130%);
-  -webkit-backdrop-filter: blur(14px) saturate(130%);
-  border: 1px solid color-mix(in oklab, white 65%, transparent);
+  background: var(--surface);
+  border: 1px solid var(--surface-2);
   border-radius: var(--radius);
-  box-shadow: 0 4px 24px -8px color-mix(in oklab, var(--violet) 18%, transparent);
+  box-shadow: 0 1px 3px rgba(17, 17, 24, 0.05), 0 1px 2px rgba(17, 17, 24, 0.03);
 }
-
 
 @utility surface-hover {
-  position: relative;
-  background: color-mix(in oklab, white 75%, transparent);
-  backdrop-filter: blur(14px) saturate(130%);
-  -webkit-backdrop-filter: blur(14px) saturate(130%);
-  border: 1px solid color-mix(in oklab, white 65%, transparent);
+  background: var(--surface);
+  border: 1px solid var(--surface-2);
   border-radius: var(--radius);
-  box-shadow: 0 4px 24px -8px color-mix(in oklab, var(--violet) 18%, transparent);
-  transition: border-color .25s ease, transform .25s ease, box-shadow .25s ease;
+  box-shadow: 0 1px 3px rgba(17, 17, 24, 0.06);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
   &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 12px 40px -12px color-mix(in oklab, var(--violet) 35%, transparent);
-    border-color: color-mix(in oklab, var(--violet) 35%, white);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px -12px rgba(17, 17, 24, 0.18);
   }
+}
+
+/* Top bar — clean light, NOT glass dark */
+@utility glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border-bottom: 1px solid var(--surface-2);
+}
+
+/* Dark promotional/highlight card */
+@utility dark-card {
+  background: #111118;
+  color: #FAFAF8;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 30px -10px rgba(17, 17, 24, 0.35);
 }
 
 @utility shimmer {
   position: relative;
   overflow: hidden;
-  background: color-mix(in oklab, var(--violet) 8%, white);
+  background: #F3F2EE;
   &::after {
     content: "";
     position: absolute; inset: 0;
-    background: linear-gradient(90deg,
-      transparent,
-      color-mix(in oklab, white 80%, transparent),
-      transparent);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.75), transparent);
     transform: translateX(-100%);
     animation: shimmer 1.6s infinite;
   }
 }
-
 
 @utility pulse-dot {
   position: relative;
@@ -158,19 +169,19 @@
     position: absolute; inset: 0;
     border-radius: 9999px;
     background: currentColor;
-    opacity: .4;
+    opacity: .35;
     animation: pulse-ring 1.6s cubic-bezier(0.4,0,0.6,1) infinite;
   }
 }
 
 @keyframes shimmer { 100% { transform: translateX(100%); } }
 @keyframes pulse-ring {
-  0% { transform: scale(1); opacity: .4; }
-  100% { transform: scale(2.2); opacity: 0; }
+  0% { transform: scale(1); opacity: .35; }
+  100% { transform: scale(2.4); opacity: 0; }
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--surface-2); border-radius: 8px; }
-::-webkit-scrollbar-thumb:hover { background: color-mix(in oklab, var(--violet) 40%, var(--surface-2)); }
+::-webkit-scrollbar-thumb { background: #E2E2DC; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #CFCFC8; }
