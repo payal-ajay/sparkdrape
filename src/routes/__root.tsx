@@ -58,7 +58,7 @@ function NotFound() {
       <div className="text-center space-y-3">
         <div className="text-6xl font-bold mono text-[color:var(--violet)]">404</div>
         <div className="text-muted-foreground">This route doesn't exist yet.</div>
-        <a href="/" className="inline-block text-sm text-[color:var(--violet)] hover:underline">← Back to SPARK</a>
+        <a href="/dashboard" className="inline-block text-sm text-[color:var(--violet)] hover:underline">← Back to SPARK</a>
       </div>
     </div>
   );

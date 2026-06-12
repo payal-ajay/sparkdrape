@@ -82,7 +82,7 @@ function LoyaltyPage() {
           <h2 className="font-semibold flex items-center gap-2"><Calendar className="size-4 text-[color:var(--amber)]" /> Upcoming Indian fashion occasions</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {occ.map(o => (
-              <Link key={o.key} to="/" className="surface-hover p-4 group">
+              <Link key={o.key} to="/dashboard" className="surface-hover p-4 group">
                 <div className="text-2xl">{o.emoji}</div>
                 <div className="text-sm font-semibold mt-2">{o.name}</div>
                 <div className="text-[10px] mono uppercase text-muted-foreground mt-0.5">in {o.daysAway}d</div>
