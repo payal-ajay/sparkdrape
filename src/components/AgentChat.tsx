@@ -146,22 +146,23 @@ export function AgentChat() {
         <div className="px-8 md:px-14 pb-8">
           <form
             onSubmit={(e) => { e.preventDefault(); send(input); }}
-            className="flex items-center gap-2 bg-white border border-[color:var(--surface-2)] rounded-2xl px-3 py-2 shadow-[0_2px_8px_-4px_rgba(17,17,24,0.08)] focus-within:border-[color:var(--violet)]/40 focus-within:shadow-[0_8px_24px_-10px_rgba(124,58,237,0.25)] transition-all"
+            className="flex items-center gap-2 bg-white border border-[#E5E7EB] rounded-3xl px-4 py-2 focus-within:border-[#7C3AED]/50 transition-all"
           >
-            <Sparkles className="size-4 text-[color:var(--violet)] ml-1.5" />
+            <Sparkles className="size-4 text-[#7C3AED] ml-1.5" />
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask SPARK — describe an audience, an occasion, or a campaign idea…"
-              className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground py-2 text-[color:var(--ink)]"
+              className="flex-1 bg-transparent outline-none text-sm placeholder:text-[#9CA3AF] py-2 text-[#111118]"
               disabled={busy}
             />
             <button
               type="submit"
               disabled={busy || !input.trim()}
-              className="size-9 rounded-xl bg-[color:var(--ink)] hover:bg-[color:var(--ink)]/90 disabled:opacity-30 grid place-items-center transition-all"
+              className="h-9 px-4 rounded-full bg-[#7C3AED] hover:bg-[#6D28D9] disabled:opacity-30 flex items-center gap-1.5 transition-all"
             >
-              <Send className="size-4 text-white" />
+              <Send className="size-3.5 text-white" />
+              <span className="text-xs font-medium text-white">Send</span>
             </button>
           </form>
         </div>
@@ -174,7 +175,7 @@ function MessageRow({ msg, onLaunch }: { msg: UIMsg; onLaunch: (c: AgentCardSpec
   if (msg.role === "user") {
     return (
       <div className="flex justify-end">
-        <div className="max-w-[80%] rounded-2xl rounded-tr-md px-4 py-2.5 text-sm bg-[color:var(--ink)] text-white">
+        <div className="max-w-[80%] rounded-2xl px-4 py-2.5 text-sm bg-white border border-[#E5E7EB] text-[#111118]">
           {msg.content}
         </div>
       </div>
@@ -185,9 +186,9 @@ function MessageRow({ msg, onLaunch }: { msg: UIMsg; onLaunch: (c: AgentCardSpec
       <div className="shrink-0 size-8 rounded-xl bg-[color:var(--ink)] grid place-items-center mt-0.5">
         <Zap className="size-4 text-white" strokeWidth={2} />
       </div>
-      <div className="flex-1 min-w-0 space-y-3">
-        <div className="text-[10px] mono uppercase tracking-widest text-muted-foreground">SPARK AI</div>
-        <div className="text-[15px] leading-relaxed text-[color:var(--ink)]">{msg.content}</div>
+      <div className="flex-1 min-w-0 space-y-3 bg-white border-l-[3px] border-[#7C3AED] rounded-r-2xl border-y border-r border-y-[#E5E7EB] border-r-[#E5E7EB] px-5 py-4">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-[11px] font-medium text-white" style={{ background: "#7C3AED", letterSpacing: "0.05em" }}>SPARK AI</span>
+        <div className="text-[14px] leading-relaxed text-[#374151]">{msg.content}</div>
         {msg.card && msg.card.type !== "none" && <AgentCard card={msg.card} onLaunch={onLaunch} />}
       </div>
     </motion.div>
