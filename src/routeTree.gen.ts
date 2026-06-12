@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as LoyaltyRouteImport } from './routes/loyalty'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CampaignsRouteImport } from './routes/campaigns'
 import { Route as AudienceRouteImport } from './routes/audience'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
@@ -24,6 +25,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const LoyaltyRoute = LoyaltyRouteImport.update({
   id: '/loyalty',
   path: '/loyalty',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CampaignsRoute = CampaignsRouteImport.update({
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/analytics': typeof AnalyticsRoute
   '/audience': typeof AudienceRoute
   '/campaigns': typeof CampaignsRoute
+  '/dashboard': typeof DashboardRoute
   '/loyalty': typeof LoyaltyRoute
   '/settings': typeof SettingsRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/analytics': typeof AnalyticsRoute
   '/audience': typeof AudienceRoute
   '/campaigns': typeof CampaignsRoute
+  '/dashboard': typeof DashboardRoute
   '/loyalty': typeof LoyaltyRoute
   '/settings': typeof SettingsRoute
 }
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/analytics': typeof AnalyticsRoute
   '/audience': typeof AudienceRoute
   '/campaigns': typeof CampaignsRoute
+  '/dashboard': typeof DashboardRoute
   '/loyalty': typeof LoyaltyRoute
   '/settings': typeof SettingsRoute
 }
@@ -79,16 +88,25 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/audience'
     | '/campaigns'
+    | '/dashboard'
     | '/loyalty'
     | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/analytics' | '/audience' | '/campaigns' | '/loyalty' | '/settings'
+  to:
+    | '/'
+    | '/analytics'
+    | '/audience'
+    | '/campaigns'
+    | '/dashboard'
+    | '/loyalty'
+    | '/settings'
   id:
     | '__root__'
     | '/'
     | '/analytics'
     | '/audience'
     | '/campaigns'
+    | '/dashboard'
     | '/loyalty'
     | '/settings'
   fileRoutesById: FileRoutesById
@@ -98,6 +116,7 @@ export interface RootRouteChildren {
   AnalyticsRoute: typeof AnalyticsRoute
   AudienceRoute: typeof AudienceRoute
   CampaignsRoute: typeof CampaignsRoute
+  DashboardRoute: typeof DashboardRoute
   LoyaltyRoute: typeof LoyaltyRoute
   SettingsRoute: typeof SettingsRoute
 }
@@ -116,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/loyalty'
       fullPath: '/loyalty'
       preLoaderRoute: typeof LoyaltyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/campaigns': {
@@ -154,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   AnalyticsRoute: AnalyticsRoute,
   AudienceRoute: AudienceRoute,
   CampaignsRoute: CampaignsRoute,
+  DashboardRoute: DashboardRoute,
   LoyaltyRoute: LoyaltyRoute,
   SettingsRoute: SettingsRoute,
 }

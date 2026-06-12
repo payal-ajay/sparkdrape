@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 const NAV = [
-  { to: "/", label: "Agent", icon: Sparkles },
+  { to: "/dashboard", label: "Agent", icon: Sparkles },
   { to: "/campaigns", label: "Campaigns", icon: Megaphone },
   { to: "/audience", label: "Audience", icon: Users },
   { to: "/analytics", label: "Analytics", icon: BarChart3 },
@@ -39,14 +39,14 @@ export function Sidebar() {
       style={{ background: "var(--sidebar)", color: "rgba(255,255,255,0.7)" }}
     >
       {/* Brand mark */}
-      <Link to="/" className="size-10 rounded-xl bg-white grid place-items-center mb-3" aria-label="SPARK home">
-        <Zap className="size-5 text-[#111118]" strokeWidth={2.5} />
+      <Link to="/dashboard" className="size-9 rounded-full grid place-items-center mb-3" style={{ background: "#7C3AED" }} aria-label="SPARK home">
+        <Zap className="size-4 text-white" strokeWidth={2.5} fill="white" />
       </Link>
 
       {/* Nav */}
       <nav className="flex-1 flex flex-col items-center gap-1.5">
         {NAV.map(({ to, label, icon: Icon }) => {
-          const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
+          const active = pathname.startsWith(to);
           return (
             <Link
               key={to}
@@ -87,8 +87,12 @@ export function Sidebar() {
         >
           <LogOut className="size-[18px]" strokeWidth={1.75} />
         </button>
-        <div className="size-9 rounded-full bg-gradient-to-br from-[color:var(--violet)] to-[color:var(--cyan)] grid place-items-center text-[11px] font-semibold text-white">
-          DR
+        <div
+          className="size-9 rounded-full grid place-items-center transition-colors hover:border-[#A78BFA]"
+          style={{ background: "#1A0533", border: "2px solid #7C3AED" }}
+          title="DRAPE"
+        >
+          <Zap className="size-4 text-white" strokeWidth={2.5} fill="white" />
         </div>
       </div>
     </aside>

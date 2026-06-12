@@ -16,13 +16,13 @@ export function PersonaBadge({ persona, className = "" }: { persona: string | nu
 
 export function TierBadge({ tier }: { tier: string | null | undefined }) {
   const map: Record<string, string> = {
-    Fan: "text-slate-300 bg-slate-700/30 border-slate-600/40",
-    Muse: "text-[color:var(--cyan)] bg-[color:var(--cyan)]/10 border-[color:var(--cyan)]/30",
-    Icon: "text-[color:var(--gold)] bg-[color:var(--gold)]/10 border-[color:var(--gold)]/40",
+    Fan: "text-[#6B7280] bg-transparent border-[#E5E7EB]",
+    Muse: "text-[#374151] bg-[#E5E7EB] border-[#E5E7EB]",
+    Icon: "text-white bg-[#F59E0B] border-[#F59E0B]",
   };
   const cls = map[tier ?? "Fan"] ?? map.Fan;
   return <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] mono uppercase tracking-wider border ${cls}`}>
-    {tier === "Icon" && "👑 "}{tier ?? "Fan"}
+    {tier ?? "Fan"}
   </span>;
 }
 
