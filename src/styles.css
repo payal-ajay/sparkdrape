@@ -52,13 +52,13 @@
   --radius: 0.875rem;
 
   /* Warm light editorial palette */
-  --background: #FAFAF8;         /* warm off-white canvas */
+  --background: #F4F4F0;          /* warm light gray canvas */
   --foreground: #111118;          /* deep ink */
   --ink: #111118;
   --sidebar: #111118;
 
   --surface: #FFFFFF;             /* card white */
-  --surface-2: #ECECE8;           /* warm hairline border */
+  --surface-2: #E5E7EB;           /* hairline border */
 
   --card: #FFFFFF;
   --card-foreground: #111118;
@@ -113,23 +113,23 @@
 
 @utility mono { font-family: var(--font-mono); font-feature-settings: "ss01"; }
 
-/* Light card surface — warm white with a hair-thin border + soft shadow */
+/* Light card surface — white with hair-thin border + soft shadow */
 @utility surface {
-  background: var(--surface);
-  border: 1px solid var(--surface-2);
-  border-radius: var(--radius);
-  box-shadow: 0 1px 3px rgba(17, 17, 24, 0.05), 0 1px 2px rgba(17, 17, 24, 0.03);
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 16px;
+  padding: 20px 24px;
 }
 
 @utility surface-hover {
-  background: var(--surface);
-  border: 1px solid var(--surface-2);
-  border-radius: var(--radius);
-  box-shadow: 0 1px 3px rgba(17, 17, 24, 0.06);
-  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 16px;
+  padding: 20px 24px;
+  transition: transform 200ms ease, box-shadow 200ms ease;
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 28px -12px rgba(17, 17, 24, 0.18);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   }
 }
 
