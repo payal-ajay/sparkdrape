@@ -88,6 +88,7 @@ function CustomersTab() {
           <thead className="text-[10px] mono uppercase tracking-widest text-muted-foreground bg-[color:var(--violet)]/5">
             <tr>
               <th className="text-left px-4 py-3">Customer</th>
+              <th className="text-center px-2 py-3">Health</th>
               <th className="text-left px-4 py-3">Persona</th>
               <th className="text-left px-4 py-3">City</th>
               <th className="text-right px-4 py-3">Spent</th>
@@ -98,9 +99,9 @@ function CustomersTab() {
           </thead>
           <tbody>
             {!filtered ? Array.from({length: 8}).map((_,i) => (
-              <tr key={i}><td colSpan={7} className="p-2"><Skel className="h-8" /></td></tr>
+              <tr key={i}><td colSpan={8} className="p-2"><Skel className="h-8" /></td></tr>
             )) : filtered.length === 0 ? (
-              <tr><td colSpan={7} className="p-8 text-center text-muted-foreground text-sm">No shoppers match. Try Seed Data in Settings.</td></tr>
+              <tr><td colSpan={8} className="p-8 text-center text-muted-foreground text-sm">No shoppers match. Try Seed Data in Settings.</td></tr>
             ) : filtered.slice(0, 200).map(c => {
               const init = (c.name ?? "?").split(" ").map(s => s[0]).join("").slice(0,2).toUpperCase();
               const personaColors: Record<string, string> = { "Trend Chaser":"var(--cyan)","Discount Hunter":"var(--amber)","Loyalist":"var(--emerald)","Lapsed High-Value":"var(--rose)","New Shopper":"var(--violet)" };
@@ -113,6 +114,7 @@ function CustomersTab() {
                       <div className="font-medium">{c.name}</div>
                     </div>
                   </td>
+                  <td className="px-2 py-2.5 text-center"><div className="inline-block"><HealthRing score={c.health_score ?? 0} /></div></td>
                   <td className="px-4 py-2.5"><PersonaBadge persona={c.persona} /></td>
                   <td className="px-4 py-2.5 text-muted-foreground">{c.city}</td>
                   <td className="px-4 py-2.5 text-right mono font-semibold">{inr(c.total_spent ?? 0)}</td>
