@@ -2,11 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { AppShell } from "@/components/AppShell";
-import { Megaphone, X, Flame, Trophy, Crown, Calendar, Users } from "lucide-react";
+import { Megaphone, X, Flame, Trophy, Crown, Calendar, Users, RefreshCw, Play } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { supabase } from "@/integrations/supabase/client";
 import { PersonaBadge, ChannelDot, Skel } from "@/components/ui-bits";
 import { processCampaignTick } from "@/lib/simulate-channel.functions";
+import { CampaignReplay } from "@/components/CampaignReplay";
 
 export const Route = createFileRoute("/campaigns")({
   head: () => ({ meta: [{ title: "Campaigns — SPARK" }] }),
