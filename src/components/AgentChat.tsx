@@ -68,13 +68,14 @@ export function AgentChat() {
         return;
       }
       const restored: UIMsg[] = data.map((row) => {
-        const meta = (row.metadata && typeof row.metadata === "object") ? (row.metadata as { card?: AgentCardSpec } & AgentCardSpec) : null;
-        const card: AgentCardSpec | undefined = meta?.card ?? (meta as AgentCardSpec | null) ?? undefined;
+        const raw = row.metadata as unknown;
+        const meta = (raw && typeof raw === "object") ? (raw as { card?: AgentCardSpec } & Partial<AgentCardSpec>) : null;
+        const card: AgentCardSpec = meta?.card ?? (meta && (meta as Partial<AgentCardSpec>).type ? (meta as AgentCardSpec) : { type: "none" });
         return {
           id: row.id,
           role: row.role as "user" | "assistant",
           content: row.content,
-          card: card ?? { type: "none" },
+          card,
           ts: new Date(row.created_at ?? Date.now()).getTime(),
         };
       });
