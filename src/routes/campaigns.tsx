@@ -19,12 +19,26 @@ interface Campaign {
   total_recipients: number | null; sent_count: number | null; delivered_count: number | null;
   opened_count: number | null; clicked_count: number | null; failed_count: number | null;
   message_template: string | null; launched_at: string | null; created_at: string | null;
+  ab_test_enabled?: boolean | null; winner_variant?: string | null;
 }
 
 function CampaignsPage() {
   const [campaigns, setCampaigns] = useState<Campaign[] | null>(null);
   const [selected, setSelected] = useState<Campaign | null>(null);
+  const [replay, setReplay] = useState<Campaign | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
   const tick = useServerFn(processCampaignTick);
+
+  async function load() {
+    const { data, error } = await supabase.from("campaigns").select("*").order("created_at", { ascending: false });
+    if (error) console.error("[campaigns] load", error);
+    setCampaigns(data ?? []);
+  }
+  async function manualRefresh() {
+    setRefreshing(true);
+    await load();
+    setTimeout(() => setRefreshing(false), 400);
+  }
 
   useEffect(() => {
     let cancelled = false;
