@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { supabase } from "@/integrations/supabase/client";
 import { PersonaBadge, TierBadge, ChannelDot, Skel } from "@/components/ui-bits";
 import { inr } from "@/lib/personas";
+import { HealthRing, healthLabel, healthBreakdown } from "@/components/HealthRing";
 
 export const Route = createFileRoute("/audience")({
   head: () => ({ meta: [{ title: "Audience — SPARK" }] }),
@@ -20,6 +21,7 @@ interface Customer {
   loyalty_tier: string | null; loyalty_points: number | null;
   favorite_category: string | null; discount_sensitivity: string | null;
   try_on_items: string[] | null; last_review_rating: number | null;
+  health_score: number | null; referral_count?: number | null;
 }
 
 function AudiencePage() {
@@ -48,7 +50,15 @@ function CustomersTab() {
   const [selected, setSelected] = useState<Customer | null>(null);
 
   useEffect(() => {
-    supabase.from("customers").select("*").order("total_spent", { ascending: false }).limit(500).then(({ data }) => setCustomers((data as Customer[]) ?? []));
+    supabase
+      .from("customers")
+      .select("*")
+      .order("health_score", { ascending: false })
+      .limit(500)
+      .then(({ data, error }) => {
+        if (error) console.error("[audience] customers fetch", error);
+        setCustomers((data as Customer[]) ?? []);
+      });
   }, []);
 
   const filtered = useMemo(() => {
@@ -78,6 +88,7 @@ function CustomersTab() {
           <thead className="text-[10px] mono uppercase tracking-widest text-muted-foreground bg-[color:var(--violet)]/5">
             <tr>
               <th className="text-left px-4 py-3">Customer</th>
+              <th className="text-center px-2 py-3">Health</th>
               <th className="text-left px-4 py-3">Persona</th>
               <th className="text-left px-4 py-3">City</th>
               <th className="text-right px-4 py-3">Spent</th>
@@ -88,9 +99,9 @@ function CustomersTab() {
           </thead>
           <tbody>
             {!filtered ? Array.from({length: 8}).map((_,i) => (
-              <tr key={i}><td colSpan={7} className="p-2"><Skel className="h-8" /></td></tr>
+              <tr key={i}><td colSpan={8} className="p-2"><Skel className="h-8" /></td></tr>
             )) : filtered.length === 0 ? (
-              <tr><td colSpan={7} className="p-8 text-center text-muted-foreground text-sm">No shoppers match. Try Seed Data in Settings.</td></tr>
+              <tr><td colSpan={8} className="p-8 text-center text-muted-foreground text-sm">No shoppers match. Try Seed Data in Settings.</td></tr>
             ) : filtered.slice(0, 200).map(c => {
               const init = (c.name ?? "?").split(" ").map(s => s[0]).join("").slice(0,2).toUpperCase();
               const personaColors: Record<string, string> = { "Trend Chaser":"var(--cyan)","Discount Hunter":"var(--amber)","Loyalist":"var(--emerald)","Lapsed High-Value":"var(--rose)","New Shopper":"var(--violet)" };
@@ -103,6 +114,7 @@ function CustomersTab() {
                       <div className="font-medium">{c.name}</div>
                     </div>
                   </td>
+                  <td className="px-2 py-2.5 text-center"><div className="inline-block"><HealthRing score={c.health_score ?? 0} /></div></td>
                   <td className="px-4 py-2.5"><PersonaBadge persona={c.persona} /></td>
                   <td className="px-4 py-2.5 text-muted-foreground">{c.city}</td>
                   <td className="px-4 py-2.5 text-right mono font-semibold">{inr(c.total_spent ?? 0)}</td>
@@ -155,10 +167,13 @@ function CustomerSlideOver({ c, onClose }: { c: Customer; onClose: () => void })
             <button onClick={onClose} className="size-8 rounded-md hover:bg-[color:var(--violet)]/10 grid place-items-center"><X className="size-4" /></button>
           </div>
 
+          <HealthCard customer={c} />
+
           <div className="surface p-4 space-y-2">
             <div className="text-[10px] mono uppercase tracking-widest text-[color:var(--violet)]">Why this persona</div>
             <div className="text-sm leading-relaxed">{personaReason}</div>
           </div>
+
 
           <div className="surface p-4 space-y-3">
             <div className="flex items-center justify-between">
@@ -226,6 +241,52 @@ function CustomerSlideOver({ c, onClose }: { c: Customer; onClose: () => void })
         </div>
       </motion.div>
     </motion.div>
+  );
+}
+
+function HealthCard({ customer }: { customer: Customer }) {
+  const score = customer.health_score ?? 0;
+  const { label, color } = healthLabel(score);
+  const b = healthBreakdown(customer);
+  const parts: { k: string; v: number; max: number }[] = [
+    { k: "Recency", v: b.recency, max: 30 },
+    { k: "Frequency", v: b.frequency, max: 25 },
+    { k: "Monetary", v: b.monetary, max: 25 },
+    { k: "Loyalty", v: b.loyalty, max: 10 },
+    { k: "Engagement", v: b.engagement, max: 10 },
+  ];
+  const driver = parts.reduce((min, p) => (p.v / p.max < min.v / min.max ? p : min), parts[0]);
+  const explanation = `${customer.name?.split(" ")[0] ?? "This shopper"} is ${label} because ${
+    driver.k === "Recency" ? `they haven't ordered in ${customer.days_since_last_order ?? "?"} days` :
+    driver.k === "Frequency" ? `they have only ${customer.order_count ?? 0} orders` :
+    driver.k === "Monetary" ? `their lifetime spend is ${inr(customer.total_spent ?? 0)}` :
+    driver.k === "Loyalty" ? `they are still in ${customer.loyalty_tier ?? "Fan"} tier` :
+    `engagement signals are low`
+  } (${driver.v}/${driver.max} ${driver.k.toLowerCase()}).${score <= 30 ? " A re-engagement campaign could recover them." : ""}`;
+  return (
+    <div className="surface p-4 space-y-4">
+      <div className="flex items-center gap-4">
+        <HealthRing score={score} size={64} />
+        <div>
+          <div className="text-[10px] mono uppercase tracking-widest text-muted-foreground">Customer Health</div>
+          <div className="text-lg font-semibold" style={{ color }}>{label}</div>
+        </div>
+      </div>
+      <div className="space-y-1.5">
+        {parts.map((p) => (
+          <div key={p.k} className="flex items-center gap-2 text-xs">
+            <div className="w-20 text-muted-foreground">{p.k}</div>
+            <div className="flex-1 h-1.5 rounded-full bg-[#F4F4F0] overflow-hidden">
+              <div className="h-full" style={{ width: `${(p.v / p.max) * 100}%`, background: color, transition: "width 700ms ease" }} />
+            </div>
+            <div className="mono w-12 text-right">{p.v}/{p.max}</div>
+          </div>
+        ))}
+      </div>
+      <div className="text-xs text-[#374151] leading-relaxed border-l-2 pl-3" style={{ borderColor: color }}>
+        {explanation}
+      </div>
+    </div>
   );
 }
 

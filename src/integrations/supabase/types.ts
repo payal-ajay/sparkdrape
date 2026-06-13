@@ -40,6 +40,7 @@ export type Database = {
       }
       campaigns: {
         Row: {
+          ab_test_enabled: boolean | null
           ai_generated: boolean | null
           campaign_type: string | null
           channel: string | null
@@ -57,8 +58,12 @@ export type Database = {
           sent_count: number | null
           status: string | null
           total_recipients: number | null
+          variant_a_description: string | null
+          variant_b_description: string | null
+          winner_variant: string | null
         }
         Insert: {
+          ab_test_enabled?: boolean | null
           ai_generated?: boolean | null
           campaign_type?: string | null
           channel?: string | null
@@ -76,8 +81,12 @@ export type Database = {
           sent_count?: number | null
           status?: string | null
           total_recipients?: number | null
+          variant_a_description?: string | null
+          variant_b_description?: string | null
+          winner_variant?: string | null
         }
         Update: {
+          ab_test_enabled?: boolean | null
           ai_generated?: boolean | null
           campaign_type?: string | null
           channel?: string | null
@@ -95,6 +104,9 @@ export type Database = {
           sent_count?: number | null
           status?: string | null
           total_recipients?: number | null
+          variant_a_description?: string | null
+          variant_b_description?: string | null
+          winner_variant?: string | null
         }
         Relationships: [
           {
@@ -117,6 +129,7 @@ export type Database = {
           email: string | null
           favorite_category: string | null
           gender: string | null
+          health_score: number | null
           id: string
           last_order_date: string | null
           last_review_rating: number | null
@@ -141,6 +154,7 @@ export type Database = {
           email?: string | null
           favorite_category?: string | null
           gender?: string | null
+          health_score?: number | null
           id?: string
           last_order_date?: string | null
           last_review_rating?: number | null
@@ -165,6 +179,7 @@ export type Database = {
           email?: string | null
           favorite_category?: string | null
           gender?: string | null
+          health_score?: number | null
           id?: string
           last_order_date?: string | null
           last_review_rating?: number | null
@@ -230,6 +245,7 @@ export type Database = {
           personalized_content: string | null
           sent_at: string | null
           status: string | null
+          variant: string | null
         }
         Insert: {
           campaign_id?: string | null
@@ -244,6 +260,7 @@ export type Database = {
           personalized_content?: string | null
           sent_at?: string | null
           status?: string | null
+          variant?: string | null
         }
         Update: {
           campaign_id?: string | null
@@ -258,6 +275,7 @@ export type Database = {
           personalized_content?: string | null
           sent_at?: string | null
           status?: string | null
+          variant?: string | null
         }
         Relationships: [
           {
