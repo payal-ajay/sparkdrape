@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { supabase } from "@/integrations/supabase/client";
 import { PersonaBadge, TierBadge, ChannelDot, Skel } from "@/components/ui-bits";
 import { inr } from "@/lib/personas";
+import { HealthRing, healthLabel, healthBreakdown } from "@/components/HealthRing";
 
 export const Route = createFileRoute("/audience")({
   head: () => ({ meta: [{ title: "Audience — SPARK" }] }),
@@ -20,6 +21,7 @@ interface Customer {
   loyalty_tier: string | null; loyalty_points: number | null;
   favorite_category: string | null; discount_sensitivity: string | null;
   try_on_items: string[] | null; last_review_rating: number | null;
+  health_score: number | null; referral_count?: number | null;
 }
 
 function AudiencePage() {
