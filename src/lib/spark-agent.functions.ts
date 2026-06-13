@@ -174,7 +174,7 @@ export const askSpark = createServerFn({ method: "POST" })
   });
 
 async function resolveSegment(
-  supabaseAdmin: Awaited<ReturnType<typeof import("@/integrations/supabase/client.server").getAdminClient>> | any, // eslint-disable-line
+  supabaseAdmin: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   f: NonNullable<AgentCardSpec["filter"]>,
 ) {
   let q = supabaseAdmin.from("customers").select("id, name, persona, preferred_channel, try_on_items, favorite_category, avg_order_value, health_score");
