@@ -187,7 +187,7 @@ interface Message {
 }
 interface CustomerLite { id: string; name: string | null; persona: string | null }
 
-function CampaignSlideOver({ campaign, onClose }: { campaign: Campaign; onClose: () => void }) {
+function CampaignSlideOver({ campaign, onClose, onReplay }: { campaign: Campaign; onClose: () => void; onReplay: () => void }) {
   const [messages, setMessages] = useState<Message[] | null>(null);
   const [customers, setCustomers] = useState<Record<string, CustomerLite>>({});
   const [expanded, setExpanded] = useState<string | null>(null);
