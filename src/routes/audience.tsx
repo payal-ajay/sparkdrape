@@ -50,7 +50,15 @@ function CustomersTab() {
   const [selected, setSelected] = useState<Customer | null>(null);
 
   useEffect(() => {
-    supabase.from("customers").select("*").order("total_spent", { ascending: false }).limit(500).then(({ data }) => setCustomers((data as Customer[]) ?? []));
+    supabase
+      .from("customers")
+      .select("*")
+      .order("health_score", { ascending: false })
+      .limit(500)
+      .then(({ data, error }) => {
+        if (error) console.error("[audience] customers fetch", error);
+        setCustomers((data as Customer[]) ?? []);
+      });
   }, []);
 
   const filtered = useMemo(() => {
