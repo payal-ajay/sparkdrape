@@ -195,7 +195,7 @@ function CampaignSlideOver({ campaign, onClose, onReplay }: { campaign: Campaign
   useEffect(() => {
     let cancelled = false;
     async function load() {
-      const { data } = await supabase.from("messages").select("id, status, personalized_content, persona_reasoning, created_at, sent_at, customer_id").eq("campaign_id", campaign.id).order("sent_at", { ascending: false, nullsFirst: false }).limit(40);
+      const { data } = await supabase.from("messages").select("id, status, personalized_content, persona_reasoning, created_at, sent_at, customer_id, variant").eq("campaign_id", campaign.id).order("sent_at", { ascending: false, nullsFirst: false }).limit(40);
       if (cancelled || !data) return;
       setMessages(data as Message[]);
       const ids = Array.from(new Set(data.map(m => m.customer_id).filter(Boolean))) as string[];
