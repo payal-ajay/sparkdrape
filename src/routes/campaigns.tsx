@@ -261,22 +261,36 @@ function CampaignSlideOver({ campaign, onClose, onReplay }: { campaign: Campaign
             </div>
             <div className="space-y-1.5">
               {!messages ? <Skel className="h-40" /> :
-                messages.map(m => {
+                messages.map((m) => {
                   const c = m.customer_id ? customers[m.customer_id] : undefined;
                   const isOpen = expanded === m.id;
                   return (
                     <motion.div key={m.id} layout initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
-                      className="rounded-md bg-[color:var(--violet)]/5 border border-[color:var(--surface-2)] p-3 space-y-1.5">
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className="text-xs font-medium truncate">{c?.name ?? "—"}</span>
-                          <PersonaBadge persona={c?.persona} />
+                      className="rounded-md bg-white border border-[#E5E7EB] overflow-hidden">
+                      <div className="p-3 space-y-1.5">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="text-xs font-medium truncate">{c?.name ?? "—"}</span>
+                            <PersonaBadge persona={c?.persona} />
+                            {m.variant && campaign.ab_test_enabled && (
+                              <span className="text-[9px] mono font-bold px-1 rounded" style={{ background: m.variant === "A" ? "#F5F3FF" : "#ECFEFF", color: m.variant === "A" ? "#7C3AED" : "#06B6D4" }}>{m.variant}</span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <StatusPill status={m.status} />
+                            <button onClick={() => setExpanded(isOpen ? null : m.id)} className="size-5 grid place-items-center rounded hover:bg-[#F4F4F0] text-[#9CA3AF]" aria-label="Why this message">
+                              <span className={`inline-block transition-transform ${isOpen ? "rotate-90" : ""}`}>›</span>
+                            </button>
+                          </div>
                         </div>
-                        <StatusPill status={m.status} />
+                        <div className="text-xs text-[#374151] line-clamp-2">{m.personalized_content}</div>
                       </div>
-                      <button onClick={() => setExpanded(isOpen ? null : m.id)} className="text-xs text-left text-foreground/80 hover:text-foreground line-clamp-2">{m.personalized_content}</button>
-                      {isOpen && m.persona_reasoning && (
-                        <div className="text-[11px] italic text-muted-foreground border-l-2 border-[color:var(--violet)]/40 pl-2 mt-1">› {m.persona_reasoning}</div>
+                      {isOpen && (
+                        <div className="px-4 py-3 space-y-2" style={{ background: "#F5F3FF", borderTop: "1px solid #E5E7EB", borderLeft: "2px solid #7C3AED" }}>
+                          <div className="text-[11px] mono uppercase font-semibold" style={{ color: "#7C3AED", letterSpacing: "0.08em" }}>Why this message?</div>
+                          <div className="text-[13px] leading-relaxed" style={{ color: "#374151" }}>{m.persona_reasoning || "—"}</div>
+                          <pre className="text-[12px] mono whitespace-pre-wrap p-2.5 rounded-md" style={{ background: "#F8F7F4", border: "1px solid #E5E7EB", color: "#111118" }}>{m.personalized_content}</pre>
+                        </div>
                       )}
                     </motion.div>
                   );
@@ -286,6 +300,62 @@ function CampaignSlideOver({ campaign, onClose, onReplay }: { campaign: Campaign
         </div>
       </motion.div>
     </motion.div>
+  );
+}
+
+function ABResultsBlock({ campaignId, winner, live }: { campaignId: string; winner: string | null; live: boolean }) {
+  const [stats, setStats] = useState<Record<string, { sent: number; opened: number; clicked: number }>>({ A: { sent: 0, opened: 0, clicked: 0 }, B: { sent: 0, opened: 0, clicked: 0 } });
+  useEffect(() => {
+    let cancel = false;
+    async function load() {
+      const { data } = await supabase.from("messages").select("variant, status").eq("campaign_id", campaignId);
+      if (cancel || !data) return;
+      const acc: Record<string, { sent: number; opened: number; clicked: number }> = { A: { sent: 0, opened: 0, clicked: 0 }, B: { sent: 0, opened: 0, clicked: 0 } };
+      for (const m of data) {
+        const v = (m.variant as string) ?? "A";
+        if (!acc[v]) acc[v] = { sent: 0, opened: 0, clicked: 0 };
+        if (["sent","delivered","opened","clicked","failed"].includes(m.status as string)) acc[v].sent++;
+        if (["opened","clicked"].includes(m.status as string)) acc[v].opened++;
+        if (m.status === "clicked") acc[v].clicked++;
+      }
+      setStats(acc);
+    }
+    load();
+    const ch = supabase.channel("ab-" + campaignId).on("postgres_changes", { event: "*", schema: "public", table: "messages", filter: `campaign_id=eq.${campaignId}` }, load).subscribe();
+    return () => { cancel = true; supabase.removeChannel(ch); };
+  }, [campaignId]);
+
+  const aRate = stats.A.sent ? Math.round((stats.A.opened / stats.A.sent) * 100) : 0;
+  const bRate = stats.B.sent ? Math.round((stats.B.opened / stats.B.sent) * 100) : 0;
+  const diff = Math.abs(bRate - aRate);
+
+  return (
+    <div className="space-y-2">
+      <div className="grid grid-cols-2 gap-2">
+        {(["A", "B"] as const).map((v) => (
+          <div key={v} className="surface p-3" style={{ borderColor: v === "A" ? "#7C3AED33" : "#06B6D433" }}>
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] mono uppercase font-bold" style={{ color: v === "A" ? "#7C3AED" : "#06B6D4" }}>Variant {v}</span>
+              <span className="text-[10px] mono text-muted-foreground">{v === "A" ? "Discount-forward" : "Story-forward"}</span>
+            </div>
+            <div className="grid grid-cols-3 gap-1 mt-2 text-center text-xs">
+              <div><div className="mono text-[9px] text-muted-foreground">SENT</div><div className="font-bold">{stats[v].sent}</div></div>
+              <div><div className="mono text-[9px] text-muted-foreground">OPENED</div><div className="font-bold">{stats[v].sent ? Math.round((stats[v].opened / stats[v].sent) * 100) : 0}%</div></div>
+              <div><div className="mono text-[9px] text-muted-foreground">CLICKED</div><div className="font-bold">{stats[v].sent ? Math.round((stats[v].clicked / stats[v].sent) * 100) : 0}%</div></div>
+            </div>
+          </div>
+        ))}
+      </div>
+      {winner ? (
+        <div className="rounded-md p-2.5 text-xs font-semibold" style={{ background: "#10B98115", color: "#10B981" }}>
+          🏆 Variant {winner} Won — {winner === "B" ? "Story" : "Discount"} tone outperformed by {diff}%
+        </div>
+      ) : (
+        <div className="rounded-md p-2.5 text-xs flex items-center gap-2" style={{ background: "#F5F3FF", color: "#7C3AED" }}>
+          {live && <span className="size-1.5 rounded-full bg-[#7C3AED] animate-pulse" />} A/B test in progress…
+        </div>
+      )}
+    </div>
   );
 }
 
