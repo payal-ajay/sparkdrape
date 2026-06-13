@@ -183,7 +183,7 @@ function EmptyState() {
 interface Message {
   id: string; status: string | null; personalized_content: string | null; persona_reasoning: string | null;
   created_at: string | null; sent_at: string | null;
-  customer_id: string | null;
+  customer_id: string | null; variant?: string | null;
 }
 interface CustomerLite { id: string; name: string | null; persona: string | null }
 
