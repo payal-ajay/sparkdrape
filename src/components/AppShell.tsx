@@ -1,6 +1,7 @@
 import { type ReactNode } from "react";
 import { Search, Bell, ChevronDown, Zap } from "lucide-react";
 import { Sidebar } from "./Sidebar";
+import { OccasionBanner } from "./OccasionBanner";
 
 export function AppShell({ title, action, children }: { title: string; action?: ReactNode; children: ReactNode }) {
   return (
@@ -31,6 +32,7 @@ export function AppShell({ title, action, children }: { title: string; action?: 
             </button>
           </div>
         </header>
+        <OccasionBanner />
         <main className="flex-1 min-w-0">{children}</main>
       </div>
     </div>
