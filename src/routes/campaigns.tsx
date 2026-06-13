@@ -41,29 +41,42 @@ function CampaignsPage() {
   }
 
   useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      const { data } = await supabase.from("campaigns").select("*").order("created_at", { ascending: false });
-      if (!cancelled) setCampaigns(data ?? []);
-    }
     load();
-    const ch = supabase.channel("campaigns-page")
+    const ch = supabase
+      .channel("campaigns-page")
       .on("postgres_changes", { event: "*", schema: "public", table: "campaigns" }, load)
       .subscribe();
-    return () => { cancelled = true; supabase.removeChannel(ch); };
+    return () => {
+      supabase.removeChannel(ch);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-tick any live campaigns (in case the originating tab closed)
   useEffect(() => {
     if (!campaigns) return;
-    const live = campaigns.filter(c => c.status === "live");
+    const live = campaigns.filter((c) => c.status === "live");
     if (live.length === 0) return;
-    const t = setInterval(() => { live.forEach(c => tick({ data: { campaignId: c.id } }).catch(() => {})); }, 2500);
+    const t = setInterval(() => {
+      live.forEach((c) => tick({ data: { campaignId: c.id } }).catch(() => {}));
+    }, 2500);
     return () => clearInterval(t);
   }, [campaigns, tick]);
 
   return (
-    <AppShell title="Campaigns">
+    <AppShell
+      title="Campaigns"
+      action={
+        <button
+          onClick={manualRefresh}
+          className="size-9 rounded-full grid place-items-center hover:bg-[#F4F4F0] transition-colors"
+          style={{ color: "#6B7280" }}
+          aria-label="Refresh"
+        >
+          <RefreshCw className={`size-4 ${refreshing ? "animate-spin" : ""}`} />
+        </button>
+      }
+    >
       <div className="p-8">
         {!campaigns ? (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -73,12 +86,25 @@ function CampaignsPage() {
           <EmptyState />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {campaigns.map(c => <CampaignCard key={c.id} c={c} onClick={() => setSelected(c)} />)}
+            {campaigns.map((c) => (
+              <CampaignCard key={c.id} c={c} onClick={() => setSelected(c)} onReplay={() => setReplay(c)} />
+            ))}
           </div>
         )}
       </div>
       <AnimatePresence>
-        {selected && <CampaignSlideOver campaign={selected} onClose={() => setSelected(null)} />}
+        {selected && <CampaignSlideOver campaign={selected} onClose={() => setSelected(null)} onReplay={() => setReplay(selected)} />}
+        {replay && (
+          <CampaignReplay
+            campaignId={replay.id}
+            campaignName={replay.name}
+            onClose={() => setReplay(null)}
+            onRunSimilar={() => {
+              sessionStorage.setItem("spark-prefill", `Run a similar campaign to "${replay.name}"`);
+              window.location.href = "/dashboard";
+            }}
+          />
+        )}
       </AnimatePresence>
     </AppShell>
   );
