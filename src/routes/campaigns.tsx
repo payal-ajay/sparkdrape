@@ -223,8 +223,20 @@ function CampaignSlideOver({ campaign, onClose, onReplay }: { campaign: Campaign
               <div className="text-[10px] mono uppercase tracking-widest text-muted-foreground">{campaign.campaign_type ?? "campaign"}</div>
               <h2 className="text-lg font-semibold tracking-tight mt-1">{campaign.name}</h2>
             </div>
-            <button onClick={onClose} className="size-8 rounded-md hover:bg-[color:var(--violet)]/10 grid place-items-center"><X className="size-4" /></button>
+            <div className="flex items-center gap-1">
+              {campaign.status === "completed" && (
+                <button onClick={onReplay} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium text-[#7C3AED] hover:bg-[#7C3AED]/10">
+                  <Play className="size-3" fill="#7C3AED" /> Instant Replay
+                </button>
+              )}
+              <button onClick={onClose} className="size-8 rounded-md hover:bg-[color:var(--violet)]/10 grid place-items-center"><X className="size-4" /></button>
+            </div>
           </div>
+
+          {campaign.ab_test_enabled && (
+            <ABResultsBlock campaignId={campaign.id} winner={campaign.winner_variant ?? null} live={campaign.status === "live"} />
+          )}
+
 
           <div className="grid grid-cols-5 gap-2 text-center">
             {[
