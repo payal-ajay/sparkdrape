@@ -167,10 +167,13 @@ function CustomerSlideOver({ c, onClose }: { c: Customer; onClose: () => void })
             <button onClick={onClose} className="size-8 rounded-md hover:bg-[color:var(--violet)]/10 grid place-items-center"><X className="size-4" /></button>
           </div>
 
+          <HealthCard customer={c} />
+
           <div className="surface p-4 space-y-2">
             <div className="text-[10px] mono uppercase tracking-widest text-[color:var(--violet)]">Why this persona</div>
             <div className="text-sm leading-relaxed">{personaReason}</div>
           </div>
+
 
           <div className="surface p-4 space-y-3">
             <div className="flex items-center justify-between">
