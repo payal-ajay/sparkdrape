@@ -119,12 +119,13 @@ function typeAccent(t: string | null) {
   return { color: "var(--violet)", icon: <Users className="size-3" />, label: "STANDARD" };
 }
 
-function CampaignCard({ c, onClick }: { c: Campaign; onClick: () => void }) {
+function CampaignCard({ c, onClick, onReplay }: { c: Campaign; onClick: () => void; onReplay: () => void }) {
   const t = typeAccent(c.campaign_type);
   const total = c.total_recipients || 1;
   const sent = c.sent_count ?? 0, delivered = c.delivered_count ?? 0, opened = c.opened_count ?? 0, clicked = c.clicked_count ?? 0;
   const openRate = sent ? Math.round((opened / sent) * 100) : 0;
   const live = c.status === "live";
+  const completed = c.status === "completed";
   return (
     <button onClick={onClick} className="text-left surface-hover p-5 space-y-3 transition-all" style={{ borderColor: live ? `color-mix(in oklab, ${t.color} 40%, var(--surface-2))` : undefined }}>
       <div className="flex items-start justify-between gap-3">
@@ -133,6 +134,7 @@ function CampaignCard({ c, onClick }: { c: Campaign; onClick: () => void }) {
             {live && <span className="absolute inset-0 rounded-full pulse-dot" />}
           </span>
           <span className="text-[10px] mono uppercase tracking-widest" style={{ color: t.color }}>{t.label}</span>
+          {c.ab_test_enabled && <span className="text-[9px] mono px-1.5 py-0.5 rounded bg-[#7C3AED]/10 text-[#7C3AED] font-bold">A/B</span>}
         </div>
         <ChannelDot channel={c.channel} />
       </div>
@@ -142,6 +144,17 @@ function CampaignCard({ c, onClick }: { c: Campaign; onClick: () => void }) {
         <span className="text-muted-foreground mono">{total} recipients</span>
         <span className="mono font-semibold">{openRate}% open</span>
       </div>
+      {completed && (
+        <div className="pt-1">
+          <span
+            onClick={(e) => { e.stopPropagation(); onReplay(); }}
+            className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-md hover:bg-[#7C3AED]/10 cursor-pointer"
+            style={{ color: "#7C3AED" }}
+          >
+            <Play className="size-3" fill="#7C3AED" /> Replay
+          </span>
+        </div>
+      )}
     </button>
   );
 }
