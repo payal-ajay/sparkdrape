@@ -244,6 +244,52 @@ function CustomerSlideOver({ c, onClose }: { c: Customer; onClose: () => void })
   );
 }
 
+function HealthCard({ customer }: { customer: Customer }) {
+  const score = customer.health_score ?? 0;
+  const { label, color } = healthLabel(score);
+  const b = healthBreakdown(customer);
+  const parts: { k: string; v: number; max: number }[] = [
+    { k: "Recency", v: b.recency, max: 30 },
+    { k: "Frequency", v: b.frequency, max: 25 },
+    { k: "Monetary", v: b.monetary, max: 25 },
+    { k: "Loyalty", v: b.loyalty, max: 10 },
+    { k: "Engagement", v: b.engagement, max: 10 },
+  ];
+  const driver = parts.reduce((min, p) => (p.v / p.max < min.v / min.max ? p : min), parts[0]);
+  const explanation = `${customer.name?.split(" ")[0] ?? "This shopper"} is ${label} because ${
+    driver.k === "Recency" ? `they haven't ordered in ${customer.days_since_last_order ?? "?"} days` :
+    driver.k === "Frequency" ? `they have only ${customer.order_count ?? 0} orders` :
+    driver.k === "Monetary" ? `their lifetime spend is ${inr(customer.total_spent ?? 0)}` :
+    driver.k === "Loyalty" ? `they are still in ${customer.loyalty_tier ?? "Fan"} tier` :
+    `engagement signals are low`
+  } (${driver.v}/${driver.max} ${driver.k.toLowerCase()}).${score <= 30 ? " A re-engagement campaign could recover them." : ""}`;
+  return (
+    <div className="surface p-4 space-y-4">
+      <div className="flex items-center gap-4">
+        <HealthRing score={score} size={64} />
+        <div>
+          <div className="text-[10px] mono uppercase tracking-widest text-muted-foreground">Customer Health</div>
+          <div className="text-lg font-semibold" style={{ color }}>{label}</div>
+        </div>
+      </div>
+      <div className="space-y-1.5">
+        {parts.map((p) => (
+          <div key={p.k} className="flex items-center gap-2 text-xs">
+            <div className="w-20 text-muted-foreground">{p.k}</div>
+            <div className="flex-1 h-1.5 rounded-full bg-[#F4F4F0] overflow-hidden">
+              <div className="h-full" style={{ width: `${(p.v / p.max) * 100}%`, background: color, transition: "width 700ms ease" }} />
+            </div>
+            <div className="mono w-12 text-right">{p.v}/{p.max}</div>
+          </div>
+        ))}
+      </div>
+      <div className="text-xs text-[#374151] leading-relaxed border-l-2 pl-3" style={{ borderColor: color }}>
+        {explanation}
+      </div>
+    </div>
+  );
+}
+
 interface Segment {
   id: string; name: string; description: string | null; customer_count: number | null;
   created_by: string | null; campaign_type: string | null; filter_logic: unknown;
