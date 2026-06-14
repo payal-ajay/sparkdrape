@@ -10,6 +10,7 @@ import { launchCampaign, processCampaignTick } from "@/lib/simulate-channel.func
 import { supabase } from "@/integrations/supabase/client";
 import { upcomingOccasions } from "@/lib/occasions";
 import { ROIEstimatorCard } from "@/components/ROIEstimatorCard";
+import { SuggestedCampaigns } from "@/components/SuggestedCampaigns";
 
 interface UIMsg {
   id?: string;
