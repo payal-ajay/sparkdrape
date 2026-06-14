@@ -5,8 +5,9 @@ import { Stat } from "@/components/Stat";
 import { Skel, TierBadge } from "@/components/ui-bits";
 import { supabase } from "@/integrations/supabase/client";
 import { upcomingOccasions } from "@/lib/occasions";
-import { Crown, Calendar, ArrowRight } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { OCCASION_PRESETS } from "@/lib/preset-campaigns";
+import { useCampaignLauncher } from "@/hooks/use-campaign-launcher";
+import { Crown, Calendar, ArrowRight, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/loyalty")({
   head: () => ({ meta: [{ title: "Loyalty — SPARK" }] }),
