@@ -5,8 +5,9 @@ import { Stat } from "@/components/Stat";
 import { Skel, TierBadge } from "@/components/ui-bits";
 import { supabase } from "@/integrations/supabase/client";
 import { upcomingOccasions } from "@/lib/occasions";
-import { Crown, Calendar, ArrowRight } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { OCCASION_PRESETS } from "@/lib/preset-campaigns";
+import { useCampaignLauncher } from "@/hooks/use-campaign-launcher";
+import { Crown, Calendar, ArrowRight, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/loyalty")({
   head: () => ({ meta: [{ title: "Loyalty — SPARK" }] }),
@@ -20,6 +21,8 @@ function LoyaltyPage() {
   const [customers, setCustomers] = useState<Customer[] | null>(null);
   const [events, setEvents] = useState<Event[] | null>(null);
   const [custMap, setCustMap] = useState<Record<string, string>>({});
+  const { launchPreset, busy } = useCampaignLauncher();
+  const [activeKey, setActiveKey] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.from("customers").select("id, name, loyalty_tier, loyalty_points, persona").order("loyalty_points", { ascending: false }).then(({ data }) => {
@@ -81,15 +84,34 @@ function LoyaltyPage() {
         <section className="surface p-6 space-y-4">
           <h2 className="font-semibold flex items-center gap-2"><Calendar className="size-4 text-[color:var(--amber)]" /> Upcoming Indian fashion occasions</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {occ.map(o => (
-              <Link key={o.key} to="/dashboard" className="surface-hover p-4 group">
-                <div className="text-2xl">{o.emoji}</div>
-                <div className="text-sm font-semibold mt-2">{o.name}</div>
-                <div className="text-[10px] mono uppercase text-muted-foreground mt-0.5">in {o.daysAway}d</div>
-                <div className="text-[11px] text-muted-foreground mt-2">{o.tone}</div>
-                <div className="text-[11px] text-[color:var(--violet)] mt-3 inline-flex items-center gap-1 group-hover:gap-2 transition-all">Build campaign <ArrowRight className="size-3" /></div>
-              </Link>
-            ))}
+            {occ.map(o => {
+              const preset = OCCASION_PRESETS[o.key];
+              const launching = busy && activeKey === o.key;
+              return (
+                <div key={o.key} className="surface-hover p-4 group flex flex-col">
+                  <div className="text-2xl">{o.emoji}</div>
+                  <div className="text-sm font-semibold mt-2">{o.name}</div>
+                  <div className="text-[10px] mono uppercase text-muted-foreground mt-0.5">in {o.daysAway}d</div>
+                  <div className="text-[11px] text-muted-foreground mt-2">{o.tone}</div>
+                  <button
+                    onClick={async () => {
+                      if (!preset) return;
+                      setActiveKey(o.key);
+                      await launchPreset(preset, { navigateToCampaigns: true });
+                      setActiveKey(null);
+                    }}
+                    disabled={busy || !preset}
+                    className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-[color:var(--violet)] hover:gap-2 transition-all disabled:opacity-60"
+                  >
+                    {launching ? (
+                      <><Loader2 className="size-3 animate-spin" /> Launching…</>
+                    ) : (
+                      <>Launch campaign <ArrowRight className="size-3" /></>
+                    )}
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </section>
 

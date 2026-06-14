@@ -10,6 +10,7 @@ import { launchCampaign, processCampaignTick } from "@/lib/simulate-channel.func
 import { supabase } from "@/integrations/supabase/client";
 import { upcomingOccasions } from "@/lib/occasions";
 import { ROIEstimatorCard } from "@/components/ROIEstimatorCard";
+import { SuggestedCampaigns } from "@/components/SuggestedCampaigns";
 
 interface UIMsg {
   id?: string;
@@ -226,6 +227,7 @@ export function AgentChat() {
       <div className="flex-1 flex min-h-0">
         <div className="flex-1 flex flex-col min-w-0">
           <div ref={scrollRef} className="flex-1 overflow-y-auto px-8 md:px-14 py-6 space-y-8">
+            <SuggestedCampaigns />
             {messages.length === 1 && (
               <div className="text-center text-sm text-[#9CA3AF] py-4">Start a new conversation with SPARK AI</div>
             )}

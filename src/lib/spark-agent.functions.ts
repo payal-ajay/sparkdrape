@@ -173,7 +173,7 @@ export const askSpark = createServerFn({ method: "POST" })
     return parsed;
   });
 
-async function resolveSegment(
+async function runSegmentQuery(
   supabaseAdmin: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   f: NonNullable<AgentCardSpec["filter"]>,
 ) {
@@ -191,7 +191,29 @@ async function resolveSegment(
   if (typeof f.max_health_score === "number") q = q.lte("health_score", f.max_health_score);
   if (f.has_try_on) q = q.not("try_on_items", "is", null);
   const { data } = await q;
-  const customers = (data ?? []) as { id: string; name: string | null; persona: string | null; preferred_channel: string | null; try_on_items: string[] | null; favorite_category: string | null; avg_order_value: number | null }[];
+  return (data ?? []) as { id: string; name: string | null; persona: string | null; preferred_channel: string | null; try_on_items: string[] | null; favorite_category: string | null; avg_order_value: number | null; health_score: number | null }[];
+}
+
+// Progressive relaxation: when the LLM over-constrains (common with
+// stacked health-score + category + spend filters), peel off the
+// narrowest criteria until we have a non-empty segment instead of
+// returning "no customers match".
+async function resolveSegment(
+  supabaseAdmin: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  f: NonNullable<AgentCardSpec["filter"]>,
+) {
+  const attempts: Array<NonNullable<AgentCardSpec["filter"]>> = [
+    f,
+    { ...f, min_health_score: undefined, max_health_score: undefined },
+    { ...f, min_health_score: undefined, max_health_score: undefined, favorite_category: undefined, discount_sensitivity: undefined },
+    { personas: f.personas },
+    {},
+  ];
+  let customers: Awaited<ReturnType<typeof runSegmentQuery>> = [];
+  for (const attempt of attempts) {
+    customers = await runSegmentQuery(supabaseAdmin, attempt);
+    if (customers.length > 0) break;
+  }
   const aovSum = customers.reduce((s, c) => s + (c.avg_order_value ?? 0), 0);
   const avgAOV = customers.length ? aovSum / customers.length : 1800;
   return { customers, avgAOV };
