@@ -133,6 +133,25 @@ export const seedDemoData = createServerFn({ method: "POST" }).handler(async () 
     const total = orders.reduce((s: number, o) => s + Number(o.amount), 0);
     const last = orders[0].order_date as string;
     const days = Math.round((Date.now() - new Date(last).getTime()) / 86400000);
+    const oc = orders.length;
+    const recency = days <= 30 ? 30 : days <= 60 ? 20 : days <= 90 ? 10 : 0;
+    const frequency = oc < 1 ? 0 : oc === 1 ? 5 : oc <= 3 ? 10 : oc <= 6 ? 18 : oc <= 10 ? 22 : 25;
+    const monetary = total < 2000 ? 5 : total < 8000 ? 12 : total < 20000 ? 20 : 25;
+    const { data: cust } = await supabaseAdmin
+      .from("customers")
+      .select("loyalty_tier, last_review_rating, try_on_items, referral_count")
+      .eq("id", c.id)
+      .maybeSingle();
+    const tier = (cust as { loyalty_tier?: string | null } | null)?.loyalty_tier ?? null;
+    const loyalty = tier === "Icon" ? 10 : tier === "Muse" ? 6 : tier === "Fan" ? 2 : 0;
+    const lrr = (cust as { last_review_rating?: number | null } | null)?.last_review_rating ?? 0;
+    const toi = (cust as { try_on_items?: string[] | null } | null)?.try_on_items ?? null;
+    const ref = (cust as { referral_count?: number | null } | null)?.referral_count ?? 0;
+    const engagement =
+      (lrr >= 4 ? 5 : 0) +
+      (toi && toi.length ? 3 : 0) +
+      (ref > 0 ? 2 : 0);
+    const health = Math.max(0, Math.min(100, recency + frequency + monetary + loyalty + engagement));
     await supabaseAdmin
       .from("customers")
       .update({
@@ -141,6 +160,7 @@ export const seedDemoData = createServerFn({ method: "POST" }).handler(async () 
         last_order_date: last,
         days_since_last_order: days,
         avg_order_value: Math.round(total / orders.length),
+        health_score: health,
       })
       .eq("id", c.id);
   }
