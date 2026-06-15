@@ -181,7 +181,7 @@ export const seedDemoData = createServerFn({ method: "POST" }).handler(async () 
   for (let i = 0; i < updates.length; i += 25) {
     await Promise.all(
       updates.slice(i, i + 25).map((u) =>
-        supabaseAdmin.from("customers").update(u.payload).eq("id", u.id),
+        supabaseAdmin.from("customers").update(u.payload as never).eq("id", u.id),
       ),
     );
   }
