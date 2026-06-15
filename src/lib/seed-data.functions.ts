@@ -123,46 +123,67 @@ export const seedDemoData = createServerFn({ method: "POST" }).handler(async () 
   for (let i = 0; i < allOrders.length; i += 500) {
     await supabaseAdmin.from("orders").insert(allOrders.slice(i, i + 500));
   }
+  // Aggregate orders per customer in one pass (avoid N round-trips)
+  const agg = new Map<string, { total: number; count: number; last: string }>();
+  for (const o of allOrders) {
+    const cur = agg.get(o.customer_id);
+    if (!cur) agg.set(o.customer_id, { total: o.amount, count: 1, last: o.order_date });
+    else {
+      cur.total += o.amount;
+      cur.count += 1;
+      if (o.order_date > cur.last) cur.last = o.order_date;
+    }
+  }
+
+  // Fetch all customer attributes once
+  const ids = inserted.map((c) => c.id);
+  const custAttrs = new Map<string, { loyalty_tier: string | null; last_review_rating: number | null; try_on_items: string[] | null; referral_count: number | null }>();
+  for (let i = 0; i < ids.length; i += 200) {
+    const { data } = await supabaseAdmin
+      .from("customers")
+      .select("id, loyalty_tier, last_review_rating, try_on_items, referral_count")
+      .in("id", ids.slice(i, i + 200));
+    if (data) for (const row of data as any[]) custAttrs.set(row.id, row);
+  }
+
+  // Build updates and run in parallel batches
+  const updates: { id: string; payload: Record<string, unknown> }[] = [];
   for (const c of inserted) {
-    const { data: orders } = await supabaseAdmin
-      .from("orders")
-      .select("amount, order_date")
-      .eq("customer_id", c.id)
-      .order("order_date", { ascending: false });
-    if (!orders || orders.length === 0) continue;
-    const total = orders.reduce((s: number, o) => s + Number(o.amount), 0);
-    const last = orders[0].order_date as string;
-    const days = Math.round((Date.now() - new Date(last).getTime()) / 86400000);
-    const oc = orders.length;
+    const a = agg.get(c.id);
+    if (!a) continue;
+    const days = Math.round((Date.now() - new Date(a.last).getTime()) / 86400000);
     const recency = days <= 30 ? 30 : days <= 60 ? 20 : days <= 90 ? 10 : 0;
+    const oc = a.count;
     const frequency = oc < 1 ? 0 : oc === 1 ? 5 : oc <= 3 ? 10 : oc <= 6 ? 18 : oc <= 10 ? 22 : 25;
-    const monetary = total < 2000 ? 5 : total < 8000 ? 12 : total < 20000 ? 20 : 25;
-    const { data: cust } = await supabaseAdmin
-      .from("customers")
-      .select("loyalty_tier, last_review_rating, try_on_items, referral_count")
-      .eq("id", c.id)
-      .maybeSingle();
-    const tier = (cust as { loyalty_tier?: string | null } | null)?.loyalty_tier ?? null;
+    const monetary = a.total < 2000 ? 5 : a.total < 8000 ? 12 : a.total < 20000 ? 20 : 25;
+    const attrs = custAttrs.get(c.id);
+    const tier = attrs?.loyalty_tier ?? null;
     const loyalty = tier === "Icon" ? 10 : tier === "Muse" ? 6 : tier === "Fan" ? 2 : 0;
-    const lrr = (cust as { last_review_rating?: number | null } | null)?.last_review_rating ?? 0;
-    const toi = (cust as { try_on_items?: string[] | null } | null)?.try_on_items ?? null;
-    const ref = (cust as { referral_count?: number | null } | null)?.referral_count ?? 0;
-    const engagement =
-      (lrr >= 4 ? 5 : 0) +
-      (toi && toi.length ? 3 : 0) +
-      (ref > 0 ? 2 : 0);
+    const lrr = attrs?.last_review_rating ?? 0;
+    const toi = attrs?.try_on_items ?? null;
+    const ref = attrs?.referral_count ?? 0;
+    const engagement = (lrr >= 4 ? 5 : 0) + (toi && toi.length ? 3 : 0) + (ref > 0 ? 2 : 0);
     const health = Math.max(0, Math.min(100, recency + frequency + monetary + loyalty + engagement));
-    await supabaseAdmin
-      .from("customers")
-      .update({
-        total_spent: total,
-        order_count: orders.length,
-        last_order_date: last,
+    updates.push({
+      id: c.id,
+      payload: {
+        total_spent: a.total,
+        order_count: oc,
+        last_order_date: a.last,
         days_since_last_order: days,
-        avg_order_value: Math.round(total / orders.length),
+        avg_order_value: Math.round(a.total / oc),
         health_score: health,
-      })
-      .eq("id", c.id);
+      },
+    });
+  }
+
+  // Run updates concurrently in batches of 25 to keep round-trip count low
+  for (let i = 0; i < updates.length; i += 25) {
+    await Promise.all(
+      updates.slice(i, i + 25).map((u) =>
+        supabaseAdmin.from("customers").update(u.payload as never).eq("id", u.id),
+      ),
+    );
   }
 
   // Loyalty events
